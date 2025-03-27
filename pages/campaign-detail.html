@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캠페인 상세</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/campaign-detail.css">
+    <script src="../js/auth.js"></script>
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-wrapper">
+            <a href="/" class="logo">로고</a>
+            <ul class="nav-menu">
+                <li><a href="/pages/visit.html?category=restaurant">맛집</a></li>
+                <li><a href="/pages/visit.html?category=cafe">카페</a></li>
+                <li><a href="/pages/visit.html?category=activity">액티비티</a></li>
+                <li><a href="/pages/visit.html?category=culture">문화</a></li>
+            </ul>
+            <div class="nav-auth">
+                <a href="/pages/login.html" class="login-btn">로그인</a>
+                <a href="/pages/register.html" class="register-btn">회원가입</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="campaign-detail">
+        <div class="campaign-header">
+            <div class="campaign-images">
+                <div class="main-image">
+                    <img id="mainImage" src="" alt="캠페인 메인 이미지">
+                </div>
+                <div class="thumbnail-list" id="thumbnailList">
+                    <!-- 썸네일 이미지들이 동적으로 추가됨 -->
+                </div>
+            </div>
+            <div class="campaign-info">
+                <div class="campaign-meta">
+                    <span id="category" class="category"></span>
+                    <div class="action-buttons">
+                        <button class="share-btn"><i class="fas fa-share-alt"></i></button>
+                        <button class="bookmark-btn"><i class="far fa-bookmark"></i></button>
+                    </div>
+                </div>
+                <h1 id="title" class="campaign-title"></h1>
+                <div class="campaign-stats">
+                    <div class="stat">
+                        <span class="label">모집인원</span>
+                        <span id="maxApplicants" class="value"></span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">신청인원</span>
+                        <span id="currentApplicants" class="value"></span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">마감일</span>
+                        <span id="deadline" class="value"></span>
+                    </div>
+                </div>
+                <div id="location" class="campaign-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span></span>
+                </div>
+                <div id="tags" class="campaign-tags">
+                    <!-- 태그들이 동적으로 추가됨 -->
+                </div>
+                <button id="applyButton" class="apply-button">신청하기</button>
+            </div>
+        </div>
+
+        <div class="campaign-content">
+            <div class="content-nav">
+                <button class="nav-item active" data-tab="details">상세정보</button>
+                <button class="nav-item" data-tab="location">위치안내</button>
+                <button class="nav-item" data-tab="guide">신청안내</button>
+                <button class="nav-item" data-tab="reviews">리뷰</button>
+            </div>
+            
+            <div id="details" class="content-section active">
+                <div id="description"></div>
+            </div>
+
+            <div id="location" class="content-section">
+                <div id="map" style="width:100%;height:400px;"></div>
+                <div class="location-info"></div>
+            </div>
+
+            <div id="guide" class="content-section">
+                <div class="guide-info"></div>
+            </div>
+
+            <div id="reviews" class="content-section">
+                <div class="reviews-container"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <!-- 푸터 내용 -->
+    </footer>
+
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_MAP_KEY"></script>
+    <script src="../js/campaign-detail.js"></script>
+</body>
+</html> 

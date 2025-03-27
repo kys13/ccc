@@ -1,0 +1,519 @@
+:root {
+    --primary-color: #FF6B6B;
+    --secondary-color: #FFA8A8;
+    --success-color: #51CF66;
+    --border-color: #E5E5E5;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --background-gray: #F8F9FA;
+}
+
+/* 네비게이션 스타일 - index.html과 동일하게 */
+.main-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    z-index: 1000;
+    height: 64px;
+}
+
+.nav-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-menu {
+    display: flex;
+    gap: 40px;
+    margin-left: 48px;
+}
+
+.main-menu a {
+    font-size: 17px;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    padding: 8px 0;
+    position: relative;
+}
+
+.main-menu a:hover,
+.main-menu a.active {
+    color: var(--primary-color);
+}
+
+.main-menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.main-menu a:hover::after,
+.main-menu a.active::after {
+    transform: scaleX(1);
+}
+
+/* 드롭다운 메뉴 */
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: -20px;
+    background: #fff;
+    min-width: 180px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.dropdown:hover .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-content a {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    display: block;
+    transition: all 0.2s ease;
+}
+
+.dropdown-content a:hover {
+    background: #f8f9fa;
+    color: var(--primary-color);
+}
+
+/* 카테고리 탭 개선 */
+.category-tabs {
+    display: flex;
+    gap: 48px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #eee;
+    padding: 0;
+}
+
+.category-tabs .tab {
+    font-size: 18px;
+    font-weight: 600;
+    color: #666;
+    text-decoration: none;
+    padding: 16px 4px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.category-tabs .tab:hover,
+.category-tabs .tab.active {
+    color: var(--primary-color);
+}
+
+.category-tabs .tab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.category-tabs .tab:hover::after,
+.category-tabs .tab.active::after {
+    transform: scaleX(1);
+}
+
+/* 사이드바 디자인 */
+.filter-sidebar {
+    width: 180px;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    height: fit-content;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.filter-group {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.filter-group h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+/* 카드 디자인 개선 */
+.campaign-card {
+    border: 1px solid #eee;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+
+.card-image {
+    position: relative;
+    width: 100%;
+    padding-top: 75%; /* 4:3 비율로 수정 */
+}
+
+.card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지 비율 유지하면서 영역 채우기 */
+}
+
+.bookmark-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.2s ease;
+}
+
+.bookmark-btn:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+.bookmark-btn i {
+    font-size: 16px;
+    color: var(--primary-color);
+}
+
+.category-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 16px;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 20px;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(255,107,107,0.3);
+}
+
+.card-content {
+    padding: 24px;
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.card-content h3 {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.campaign-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.reward {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.deadline {
+    background: #f8f9fa;
+    color: #666;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+/* 프로그레스 바 개선 */
+.progress-bar {
+    height: 4px;
+    background: var(--background-gray);
+    border-radius: 2px;
+    margin: 12px 0 8px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, 
+        var(--primary-color) 0%,
+        var(--secondary-color) 50%,
+        var(--success-color) 100%
+    );
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* 필터 버튼 개선 */
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 방문 페이지 스타일 */
+.visit-page {
+    max-width: 1200px;
+    margin: 80px auto 0;
+    padding: 24px 20px;
+    display: flex;
+    gap: 32px;
+}
+
+/* 왼쪽 필터 사이드바 */
+.filter-sidebar {
+    width: 180px;
+    flex-shrink: 0;
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    height: fit-content;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 메인 컨텐츠 영역 */
+.main-content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 카테고리 탭 */
+.category-tabs {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.category-tabs .tab {
+    font-size: 15px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 4px;
+    position: relative;
+}
+
+.filter-group {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.filter-group h3 {
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+/* 라디오 버튼 그룹 개선 */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.radio-item input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    margin: 0;  /* 기본 마진 제거 */
+}
+
+.radio-item input[type="radio"]:checked {
+    border-color: var(--primary-color);
+}
+
+.radio-item input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: var(--primary-color);
+    border-radius: 50%;
+}
+
+.radio-item label {
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    user-select: none;  /* 텍스트 선택 방지 */
+}
+
+/* 필터 섹션에서 지역 선택 제거 */
+.filter-section {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 24px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+/* 지역 필터 제거 */
+.region-filter {
+    display: none;
+}
+
+/* 캠페인 그리드 */
+.campaign-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.campaign-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* 지역 선택 드롭다운 개선 */
+.region-select-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.region-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #666;
+    background: white;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+}
+
+.region-select:hover {
+    border-color: var(--primary-color);
+}
+
+.region-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255,107,107,0.1);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .campaign-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .visit-page {
+        flex-direction: column;
+    }
+    
+    .filter-sidebar {
+        width: 100%;
+    }
+    
+    .campaign-grid {
+        grid-template-columns: 1fr;
+    }
+}   

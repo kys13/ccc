@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>리뷰 관리 - 관리자</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin/campaign.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- 사이드바는 유지 -->
+
+        <main class="admin-main">
+            <header class="content-header">
+                <h1>캠페인 리뷰 관리</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="리뷰 검색..." id="reviewSearch">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <button class="btn btn-primary" id="exportReviews">
+                        <i class="fas fa-download"></i> 리뷰 내보내기
+                    </button>
+                </div>
+            </header>
+
+            <div class="review-filters">
+                <div class="filter-group">
+                    <label>상태</label>
+                    <select id="statusFilter">
+                        <option value="">전체</option>
+                        <option value="pending">승인 대기</option>
+                        <option value="approved">승인됨</option>
+                        <option value="rejected">거절됨</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>평점</label>
+                    <select id="ratingFilter">
+                        <option value="">전체</option>
+                        <option value="5">5점</option>
+                        <option value="4">4점</option>
+                        <option value="3">3점</option>
+                        <option value="2">2점</option>
+                        <option value="1">1점</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>정렬</label>
+                    <select id="sortFilter">
+                        <option value="latest">최신순</option>
+                        <option value="oldest">오래된순</option>
+                        <option value="rating">평점순</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="review-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalReviews">0</div>
+                    <div class="stat-label">전체 리뷰</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingReviews">0</div>
+                    <div class="stat-label">승인 대기</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgRating">0.0</div>
+                    <div class="stat-label">평균 평점</div>
+                </div>
+            </div>
+
+            <div class="review-list" id="reviewList">
+                <!-- 리뷰 카드들이 동적으로 추가됨 -->
+            </div>
+
+            <div class="pagination" id="pagination">
+                <!-- 페이지네이션이 동적으로 추가됨 -->
+            </div>
+        </main>
+
+        <!-- 리뷰 상세 모달 -->
+        <div class="modal" id="reviewModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>리뷰 상세</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- 리뷰 상세 내용이 동적으로 추가됨 -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-action="approve">승인</button>
+                    <button class="btn btn-danger" data-action="reject">거절</button>
+                    <button class="btn btn-primary" data-action="feedback">피드백 전송</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/admin/campaign-reviews.js"></script>
+</body>
+</html> 

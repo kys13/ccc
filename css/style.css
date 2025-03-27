@@ -1,0 +1,731 @@
+:root {
+    --primary-color: #FF5C35;
+    --secondary-color: #FF8A3D;
+    --text-color: #333;
+    --light-gray: #f8f9fa;
+    --border-color: #eaecef;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --font-main: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--light-gray);
+    padding: 0 100px;
+    letter-spacing: -0.3px;
+}
+
+/* 네비게이션 스타일 */
+.main-nav {
+    background: white;
+    box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.nav-wrapper {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    margin-left: -60px;
+}
+
+.nav-left .logo img {
+    height: 32px;
+}
+
+.nav-center {
+    margin-left: 60px;
+}
+
+.main-menu {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+    height: 100%;
+}
+
+.main-menu .dropdown {
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.main-menu a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 16px;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+.main-menu a:hover {
+    color: var(--primary-color);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    min-width: 220px;
+    box-shadow: var(--shadow);
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 8px 0;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+.dropdown-content a {
+    padding: 12px 24px;
+    display: block;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.dropdown-content a:hover {
+    background: var(--light-gray);
+}
+
+/* 검색창 스타일 업데이트 */
+.search-box {
+    display: flex;
+    align-items: center;
+    background: var(--light-gray);
+    border-radius: 8px;
+    padding: 0 1.2rem;
+    width: 300px;
+    height: 44px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.search-box:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255,92,53,0.1);
+}
+
+.search-box input {
+    border: none;
+    background: none;
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.search-box input::placeholder {
+    color: #adb5bd;
+}
+
+.search-box button {
+    background: none;
+    border: none;
+    color: #adb5bd;
+    cursor: pointer;
+    padding: 0 0.5rem;
+}
+
+/* 버튼 스타일 업데이트 */
+.nav-button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color);
+    margin-left: 1rem;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.nav-button.primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.nav-button.primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-1px);
+}
+
+/* 서브 네비게이션 */
+.sub-nav {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    margin-top: 70px;
+}
+
+.category-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.category-menu a {
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 1rem 0;
+    display: block;
+    position: relative;
+}
+
+.category-menu a.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary-color);
+}
+
+/* 캠페인 카드 스타일 업데이트 */
+.campaign-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    padding: 0 2rem 2rem;
+}
+
+.campaign-card {
+    border-radius: 16px;
+    background: white;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.campaign-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.08);
+}
+
+.card-image {
+    position: relative;
+    padding-top: 75%;
+}
+
+.card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.card-header h3 {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.card-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.card-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.card-tags span {
+    background: var(--light-gray);
+    padding: 0.2rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 0;
+}
+
+.section-header h2 {
+    font-size: 2rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.section-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* 드롭다운 메뉴 스타일 */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    min-width: 200px;
+    box-shadow: var(--shadow);
+    border-radius: 8px;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    padding: 1rem 1.5rem;
+    display: block;
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.dropdown-content a:hover {
+    background: var(--light-gray);
+}
+
+/* 캠페인 리스트 헤더 스타일 */
+.list-header {
+    text-align: left;
+    padding: 2rem;
+    margin-bottom: 1rem;
+}
+
+.list-header h2 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.list-header p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* 반응형 그리드 */
+@media (max-width: 1200px) {
+    .campaign-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .campaign-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .campaign-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 푸터 스타일 */
+footer {
+    background: white;
+    padding: 3rem 0;
+    margin-top: 4rem;
+    border-top: 1px solid var(--border-color);
+    margin-left: -100px;
+    margin-right: -100px;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.footer-content {
+    max-width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    padding: 0 2rem;
+}
+
+.footer-section h3 {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.footer-section .contact-info {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.footer-section .contact-info strong {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-section ul li a {
+    color: #666;
+    text-decoration: none;
+}
+
+.footer-section ul li a:hover {
+    color: var(--primary-color);
+}
+
+/* 캠페인 슬라이더 스타일 */
+.campaign-slider {
+    position: relative;
+    padding: 0 2rem;
+    margin-bottom: 4rem;
+    overflow: hidden;
+}
+
+.campaign-container {
+    display: flex;
+    gap: 24px;
+    transition: transform 0.3s ease-in-out;
+    padding: 0 10px;
+}
+
+.campaign-card {
+    flex: 0 0 calc(25% - 18px);
+    min-width: calc(25% - 18px);
+}
+
+.campaign-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-image {
+    position: relative;
+    padding-top: 75%;
+}
+
+.card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.campaign-type {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.card-header h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.card-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.card-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.card-tags span {
+    background: var(--light-gray);
+    padding: 0.2rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-btn.prev {
+    left: 0;
+}
+
+.slider-btn.next {
+    right: 0;
+}
+
+.slider-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 작은 카드 스타일 */
+.small-campaign-card {
+    transform: scale(0.8);
+    margin-top: 2rem;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) translateX(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+}
+
+/* 메인 배너 스타일 업데이트 */
+.main-slider {
+    margin-top: 90px;
+    position: relative;
+    overflow: hidden;
+}
+
+.slider-container {
+    max-width: 100%;
+    position: relative;
+}
+
+.slider-wrapper {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    flex: 0 0 100%;
+    position: relative;
+}
+
+.slide img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.slide-content {
+    position: absolute;
+    bottom: 60px;
+    left: 60px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.slide-content h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.slide-content p {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 12px 32px;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.cta-button:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+.slider-pagination {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.pagination-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.pagination-dot.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+/* 아이콘 컨테이너 스타일 */
+.category-icons {
+    padding: 3rem 0;
+    background: white;
+    margin: 2rem 0;
+    border-radius: 16px;
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+}
+
+.icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: transform 0.2s ease;
+}
+
+.icon-item:hover {
+    transform: translateY(-5px);
+}
+
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    background: var(--light-gray);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    transition: all 0.2s ease;
+}
+
+.icon-item:hover .icon-circle {
+    background: var(--primary-color);
+    color: white;
+}
+
+.icon-item span {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* 인기 캠페인 배지 */
+.popular-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* 북마크 버튼 */
+.bookmark {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.bookmark:hover {
+    background: var(--primary-color);
+    color: white;
+} 

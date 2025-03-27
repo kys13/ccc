@@ -1,0 +1,278 @@
+/* 탭 스타일 */
+.notification-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.tab-button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    color: var(--text-color-light);
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.tab-button.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 탭 컨텐츠 */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 알림 그리드 */
+.notification-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.notification-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.notification-section h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+/* 예약된 알림 */
+.scheduled-notifications {
+    display: grid;
+    gap: 1rem;
+}
+
+.scheduled-item {
+    background: var(--bg-light);
+    padding: 1rem;
+    border-radius: 8px;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.scheduled-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.scheduled-title {
+    font-weight: 500;
+}
+
+.scheduled-time {
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+}
+
+.scheduled-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 자동 알림 설정 */
+.auto-notifications {
+    display: grid;
+    gap: 1rem;
+}
+
+.notification-setting {
+    background: var(--bg-light);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.setting-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.setting-header h3 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* 토글 스위치 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* 이메일 템플릿 */
+.email-templates {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.template-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.template-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 8px;
+}
+
+.template-info h3 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1rem;
+}
+
+.template-info p {
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* 발송 이력 */
+.history-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    color: var(--text-color-light);
+}
+
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    min-width: 120px;
+}
+
+.history-table-wrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.history-table th {
+    font-weight: 500;
+    color: var(--text-color-light);
+    background: var(--bg-light);
+}
+
+/* 상태 배지 */
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.status-success {
+    background: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+}
+
+.status-failed {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+    .notification-tabs {
+        flex-wrap: wrap;
+    }
+
+    .history-filters {
+        flex-direction: column;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+
+    .template-item {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+} 

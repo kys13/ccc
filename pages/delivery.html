@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배송 체험단 - 체험단 플랫폼</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/visit.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-wrapper">
+            <div class="nav-left">
+                <a href="../index.html" class="logo">
+                    <img src="../images/logo.png" alt="로고">
+                </a>
+                <ul class="main-menu">
+                    <li class="dropdown">
+                        <a href="visit.html">방문</a>
+                        <div class="dropdown-content">
+                            <a href="visit/restaurant.html">맛집</a>
+                            <a href="visit/cafe.html">카페</a>
+                            <a href="visit/beauty.html">뷰티</a>
+                            <a href="visit/hotel.html">숙박</a>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="delivery.html" class="active">배송</a>
+                        <div class="dropdown-content">
+                            <a href="delivery/food.html">식품</a>
+                            <a href="delivery/beauty.html">화장품</a>
+                            <a href="delivery/living.html">생활용품</a>
+                            <a href="delivery/fashion.html">패션/잡화</a>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="inquiry.html">문의하기</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <a href="login.html" class="nav-button">로그인</a>
+                <a href="register.html" class="nav-button primary">회원가입</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="visit-page">
+        <!-- 왼쪽 필터 사이드바 -->
+        <aside class="filter-sidebar">
+            <div class="filter-group">
+                <h3>지역</h3>
+                <div class="region-select-group">
+                    <select class="region-select" id="city">
+                        <option value="">시/도 선택</option>
+                        <option value="seoul">서울특별시</option>
+                        <option value="gyeonggi">경기도</option>
+                        <option value="incheon">인천광역시</option>
+                        <option value="busan">부산광역시</option>
+                        <option value="daegu">대구광역시</option>
+                        <option value="gwangju">광주광역시</option>
+                        <option value="daejeon">대전광역시</option>
+                        <option value="ulsan">울산광역시</option>
+                    </select>
+                    <select class="region-select" id="district">
+                        <option value="">구/군 선택</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>진행상태</h3>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" name="status" id="status-all" value="all" checked>
+                        <label for="status-all">전체</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" name="status" id="status-ongoing" value="ongoing">
+                        <label for="status-ongoing">진행중</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" name="status" id="status-upcoming" value="upcoming">
+                        <label for="status-upcoming">진행예정</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <h3>SNS 채널</h3>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" name="sns" id="sns-all" value="all" checked>
+                        <label for="sns-all">전체</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" name="sns" id="sns-instagram" value="instagram">
+                        <label for="sns-instagram">인스타그램</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" name="sns" id="sns-blog" value="blog">
+                        <label for="sns-blog">블로그</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" name="sns" id="sns-youtube" value="youtube">
+                        <label for="sns-youtube">유튜브</label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- 메인 컨텐츠 영역 -->
+        <div class="main-content">
+            <div class="category-tabs">
+                <a href="delivery.html" class="tab active" data-category="all">전체</a>
+                <a href="delivery/food.html" class="tab" data-category="food">식품</a>
+                <a href="delivery/beauty.html" class="tab" data-category="beauty">화장품</a>
+                <a href="delivery/living.html" class="tab" data-category="living">생활용품</a>
+                <a href="delivery/fashion.html" class="tab" data-category="fashion">패션/잡화</a>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-buttons">
+                    <button class="filter-btn active">
+                        <i class="fas fa-clock"></i>최신순
+                    </button>
+                    <button class="filter-btn">
+                        <i class="fas fa-fire"></i>인기순
+                    </button>
+                    <button class="filter-btn">
+                        <i class="fas fa-hourglass-end"></i>마감임박순
+                    </button>
+                </div>
+            </div>
+
+            <div class="campaign-cards">
+                <!-- 캠페인 카드들이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/visit.js"></script>
+</body>
+</html> 

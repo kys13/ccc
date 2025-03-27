@@ -1,0 +1,154 @@
+/* 배송 페이지는 방문 페이지와 동일한 스타일 사용 */
+.delivery-page {
+    max-width: 1200px;
+    margin: 80px auto 0;
+    padding: 24px 20px;
+    display: flex;
+    gap: 32px;
+}
+
+/* 메인 컨텐츠 영역 */
+.main-content {
+    flex: 1;
+}
+
+/* 카테고리 탭 */
+.category-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.tab:hover {
+    background: #f8f9fa;
+    color: var(--primary-color);
+}
+
+.tab.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    background: white;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.filter-btn i {
+    font-size: 12px;
+}
+
+/* 캠페인 그리드 */
+.campaign-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* 카드 스타일 */
+.campaign-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.campaign-card:hover {
+    transform: translateY(-4px);
+}
+
+/* 배송 카테고리별 태그 색상 유지 */
+.campaign-card[data-category="food"] .category-tag {
+    background: #FF6B6B;
+}
+
+.campaign-card[data-category="beauty"] .category-tag {
+    background: #FF9F9F;
+}
+
+.campaign-card[data-category="living"] .category-tag {
+    background: #74C0FC;
+}
+
+.campaign-card[data-category="fashion"] .category-tag {
+    background: #B197FC;
+}
+
+/* 배송 페이지만의 고유한 스타일이 필요한 경우 여기에 추가 */
+
+/* 배송 페이지 전용 스타일 */
+.category-tag {
+    background: var(--primary-color);
+}
+
+/* 배송 카테고리별 태그 색상 */
+.campaign-card[data-category="food"] .category-tag {
+    background: #FF6B6B;
+}
+
+.campaign-card[data-category="beauty"] .category-tag {
+    background: #FF9F9F;
+}
+
+.campaign-card[data-category="living"] .category-tag {
+    background: #74C0FC;
+}
+
+.campaign-card[data-category="fashion"] .category-tag {
+    background: #B197FC;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .delivery-page {
+        flex-direction: column;
+    }
+
+    .filter-sidebar {
+        width: 100%;
+    }
+
+    .campaign-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+} 

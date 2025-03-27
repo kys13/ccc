@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캠페인 통계 - 관리자</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin/statistics.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- 사이드바는 유지 -->
+
+        <main class="admin-main">
+            <header class="content-header">
+                <h1>캠페인 통계</h1>
+                <div class="header-actions">
+                    <div class="date-range-picker" id="dateRange">
+                        <i class="fas fa-calendar"></i>
+                        <span>기간 선택</span>
+                    </div>
+                    <button class="btn btn-primary" id="exportStats">
+                        <i class="fas fa-download"></i> 통계 내보내기
+                    </button>
+                </div>
+            </header>
+
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalCampaigns">0</div>
+                        <div class="stat-label">전체 캠페인</div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalApplicants">0</div>
+                        <div class="stat-label">총 신청자</div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="completionRate">0%</div>
+                        <div class="stat-label">완료율</div>
+                    </div>
+                    <div class="stat-trend negative">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>3%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="avgRating">0.0</div>
+                        <div class="stat-label">평균 평점</div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <h3>캠페인 현황</h3>
+                    <canvas id="campaignStatusChart"></canvas>
+                </div>
+                <div class="stats-card">
+                    <h3>카테고리별 분포</h3>
+                    <canvas id="categoryDistributionChart"></canvas>
+                </div>
+                <div class="stats-card">
+                    <h3>월별 신청자 추이</h3>
+                    <canvas id="applicantTrendChart"></canvas>
+                </div>
+                <div class="stats-card">
+                    <h3>평점 분포</h3>
+                    <canvas id="ratingDistributionChart"></canvas>
+                </div>
+            </div>
+
+            <div class="stats-table-section">
+                <h3>인기 캠페인 TOP 10</h3>
+                <div class="table-wrapper">
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>순위</th>
+                                <th>캠페인명</th>
+                                <th>카테고리</th>
+                                <th>신청자수</th>
+                                <th>평균 평점</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topCampaigns">
+                            <!-- 동적으로 추가됨 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="../../js/admin/campaign-statistics.js"></script>
+</body>
+</html> 

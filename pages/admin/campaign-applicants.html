@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신청자 관리 - 관리자</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin/campaign.css">
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/admin/campaign-applicants.js"></script>
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- 사이드바는 유지 -->
+
+        <main class="admin-main">
+            <header class="content-header">
+                <h1>신청자 관리</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i> 캠페인으로 돌아가기
+                    </button>
+                    <button class="btn btn-primary" id="exportApplicants">
+                        <i class="fas fa-download"></i> 엑셀 다운로드
+                    </button>
+                </div>
+            </header>
+
+            <div class="campaign-info-banner">
+                <div class="campaign-basic-info">
+                    <h2 id="campaignTitle">캠페인 제목</h2>
+                    <div class="campaign-meta">
+                        <span id="campaignPeriod">2024.01.01 ~ 2024.01.31</span>
+                        <span id="campaignStatus" class="status-badge">진행중</span>
+                    </div>
+                </div>
+                <div class="applicant-stats">
+                    <div class="stat-item">
+                        <span class="label">모집 인원</span>
+                        <span class="value" id="recruitCount">0/50</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">승인 대기</span>
+                        <span class="value" id="pendingCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">승인 완료</span>
+                        <span class="value" id="approvedCount">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="applicant-filters">
+                <div class="filter-group">
+                    <label>상태</label>
+                    <select id="statusFilter">
+                        <option value="">전체</option>
+                        <option value="pending">승인 대기</option>
+                        <option value="approved">승인</option>
+                        <option value="rejected">거절</option>
+                    </select>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchApplicant" placeholder="신청자 검색...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="bulk-actions">
+                    <button class="btn btn-secondary" id="bulkApprove">
+                        <i class="fas fa-check"></i> 일괄 승인
+                    </button>
+                    <button class="btn btn-danger" id="bulkReject">
+                        <i class="fas fa-times"></i> 일괄 거절
+                    </button>
+                </div>
+            </div>
+
+            <div class="applicant-table-wrapper">
+                <table class="applicant-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll">
+                            </th>
+                            <th>신청자</th>
+                            <th>연락처</th>
+                            <th>SNS 정보</th>
+                            <th>신청일</th>
+                            <th>상태</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicantList">
+                        <!-- 신청자 목록이 동적으로 추가됨 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination">
+                <!-- 페이지네이션이 동적으로 추가됨 -->
+            </div>
+        </main>
+
+        <!-- 신청자 상세 정보 모달 -->
+        <div class="modal" id="applicantModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>신청자 상세 정보</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- 신청자 상세 정보가 동적으로 추가됨 -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-action="approve">승인</button>
+                    <button class="btn btn-danger" data-action="reject">거절</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

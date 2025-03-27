@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알림 관리 - 관리자</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin/notifications.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- 사이드바 메뉴 -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="../../images/logo.png" alt="로고" class="admin-logo">
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>대시보드</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="campaigns.html">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>캠페인 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="users.html">
+                        <i class="fas fa-users"></i>
+                        <span>회원 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="reviews.html">
+                        <i class="fas fa-star"></i>
+                        <span>리뷰 관리</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="notifications.html">
+                        <i class="fas fa-bell"></i>
+                        <span>알림 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="seo.html">
+                        <i class="fas fa-search"></i>
+                        <span>SEO 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="admin-main">
+            <header class="content-header">
+                <h1>알림 관리</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="location.href='new-notification.html'">
+                        <i class="fas fa-plus"></i> 새 알림 작성
+                    </button>
+                </div>
+            </header>
+
+            <div class="notification-tabs">
+                <button class="tab-button active" data-tab="push">푸시 알림</button>
+                <button class="tab-button" data-tab="email">이메일 템플릿</button>
+                <button class="tab-button" data-tab="history">발송 이력</button>
+            </div>
+
+            <div class="tab-content active" id="pushTab">
+                <div class="notification-grid">
+                    <div class="notification-section">
+                        <h2>예약된 알림</h2>
+                        <div class="scheduled-notifications" id="scheduledNotifications">
+                            <!-- 예약된 알림 목록이 동적으로 추가됨 -->
+                        </div>
+                    </div>
+
+                    <div class="notification-section">
+                        <h2>자동 알림 설정</h2>
+                        <div class="auto-notifications">
+                            <div class="notification-setting">
+                                <div class="setting-header">
+                                    <label class="switch">
+                                        <input type="checkbox" id="newCampaignNotif">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <h3>새 캠페인 알림</h3>
+                                </div>
+                                <p>새로운 캠페인이 등록될 때 알림 발송</p>
+                            </div>
+                            <div class="notification-setting">
+                                <div class="setting-header">
+                                    <label class="switch">
+                                        <input type="checkbox" id="reviewNotif">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <h3>리뷰 알림</h3>
+                                </div>
+                                <p>새로운 리뷰가 등록될 때 알림 발송</p>
+                            </div>
+                            <div class="notification-setting">
+                                <div class="setting-header">
+                                    <label class="switch">
+                                        <input type="checkbox" id="deadlineNotif">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <h3>마감 임박 알림</h3>
+                                </div>
+                                <p>캠페인 마감 24시간 전 알림 발송</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="emailTab">
+                <div class="email-templates">
+                    <div class="template-list">
+                        <div class="template-item">
+                            <div class="template-info">
+                                <h3>회원가입 환영</h3>
+                                <p>새로운 회원 가입 시 발송되는 이메일</p>
+                            </div>
+                            <button class="btn btn-secondary">수정</button>
+                        </div>
+                        <div class="template-item">
+                            <div class="template-info">
+                                <h3>캠페인 선정 안내</h3>
+                                <p>캠페인 참여자로 선정되었을 때 발송되는 이메일</p>
+                            </div>
+                            <button class="btn btn-secondary">수정</button>
+                        </div>
+                        <div class="template-item">
+                            <div class="template-info">
+                                <h3>리뷰 승인 알림</h3>
+                                <p>리뷰가 승인되었을 때 발송되는 이메일</p>
+                            </div>
+                            <button class="btn btn-secondary">수정</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="historyTab">
+                <div class="history-filters">
+                    <div class="filter-group">
+                        <label>유형</label>
+                        <select id="typeFilter">
+                            <option value="">전체</option>
+                            <option value="push">푸시</option>
+                            <option value="email">이메일</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>상태</label>
+                        <select id="statusFilter">
+                            <option value="">전체</option>
+                            <option value="success">성공</option>
+                            <option value="failed">실패</option>
+                        </select>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" placeholder="검색..." id="historySearch">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+
+                <div class="history-table-wrapper">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>발송 시간</th>
+                                <th>유형</th>
+                                <th>제목</th>
+                                <th>대상</th>
+                                <th>상태</th>
+                                <th>열람률</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyList">
+                            <!-- 발송 이력이 동적으로 추가됨 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="historyPagination">
+                    <!-- 페이지네이션이 동적으로 추가됨 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/admin/notifications.js"></script>
+</body>
+</html> 

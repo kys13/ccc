@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>체험단 플랫폼</title>
+    <!-- 폰트어썸 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 폰트 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="stylesheet" href="css/cards.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/notification.css">
+    <link rel="stylesheet" href="css/ranking.css">
+    <link rel="stylesheet" href="css/search.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-wrapper">
+            <div class="nav-left">
+                <a href="index.html" class="logo">
+                    <img src="images/logo.png" alt="로고">
+                </a>
+                <ul class="main-menu">
+                    <li class="dropdown">
+                        <a href="pages/visit.html">방문</a>
+                        <div class="dropdown-content">
+                            <a href="pages/visit/restaurant.html">맛집</a>
+                            <a href="pages/visit/cafe.html">카페</a>
+                            <a href="pages/visit/beauty.html">뷰티</a>
+                            <a href="pages/visit/hotel.html">숙박</a>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="pages/delivery.html">배송</a>
+                        <div class="dropdown-content">
+                            <a href="pages/delivery/food.html">식품</a>
+                            <a href="pages/delivery/beauty.html">화장품</a>
+                            <a href="pages/delivery/living.html">생활용품</a>
+                            <a href="pages/delivery/fashion.html">패션/잡화</a>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="pages/inquiry.html">문의하기</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <a href="pages/login.html" class="nav-button">로그인</a>
+                <a href="pages/register.html" class="nav-button primary">회원가입</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 메인 배너 슬라이더 -->
+        <section class="main-slider">
+            <div class="slider-container">
+                <div class="slider-wrapper">
+                    <div class="slide">
+                        <img src="random_images/11.jpg" alt="메인 배너 1">
+                        <div class="slide-content">
+                            <h2>신규 체험단</h2>
+                            <p>새로운 맛집 체험의 기회!</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <img src="random_images/22.jpg" alt="메인 배너 2">
+                        <div class="slide-content">
+                            <h2>인기 체험단</h2>
+                            <p>프리미엄 뷰티 제품 체험</p>
+                            <a href="#" class="cta-button">참여하기</a>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <img src="random_images/33.jpg" alt="메인 배너 3">
+                        <div class="slide-content">
+                            <h2>마감임박</h2>
+                            <p>놓치면 후회하는 특별한 기회</p>
+                            <a href="#" class="cta-button">참여하기</a>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <img src="random_images/55.jpg" alt="메인 배너 4">
+                        <div class="slide-content">
+                            <h2>신규회원 혜택</h2>
+                            <p>가입하고 특별한 혜택 받기</p>
+                            <a href="#" class="cta-button">가입하기</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-indicators">
+                    <button class="indicator active" data-index="0"></button>
+                    <button class="indicator" data-index="1"></button>
+                    <button class="indicator" data-index="2"></button>
+                    <button class="indicator" data-index="3"></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 아이콘 컨테이너 -->
+        <section class="category-icons">
+            <div class="icon-container">
+                <a href="pages/visit/restaurant.html" class="icon-item">
+                    <div class="icon-circle">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <span>맛집</span>
+                </a>
+                <a href="pages/visit/cafe.html" class="icon-item">
+                    <div class="icon-circle">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    <span>카페</span>
+                </a>
+                <a href="pages/visit/beauty.html" class="icon-item">
+                    <div class="icon-circle">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <span>뷰티</span>
+                </a>
+                <a href="pages/visit/hotel.html" class="icon-item">
+                    <div class="icon-circle">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <span>숙박</span>
+                </a>
+                <a href="pages/delivery.html" class="icon-item">
+                    <div class="icon-circle">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <span>배송</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- 캠페인 리스트 -->
+        <section class="campaign-list">
+            <div class="list-header">
+                <h2>진행중인 캠페인</h2>
+                <p>총 <span class="campaign-count">127</span>개의 캠페인이 있습니다.</p>
+            </div>
+            <div class="campaign-slider">
+                <button class="slider-btn prev"><i class="fas fa-chevron-left"></i></button>
+                <div class="campaign-cards">
+                    <!-- 캠페인 카드들이 여기에 동적으로 추가됩니다 -->
+                </div>
+                <button class="slider-btn next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <!-- 두 번째 캠페인 섹션 -->
+            <div class="list-header">
+                <h2>인기 캠페인</h2>
+                <p>지금 가장 인기있는 체험단을 만나보세요!</p>
+            </div>
+            <div class="campaign-slider">
+                <button class="slider-btn prev"><i class="fas fa-chevron-left"></i></button>
+                <div class="campaign-cards">
+                    <!-- 인기 캠페인 카드들이 여기에 동적으로 추가됩니다 -->
+                </div>
+                <button class="slider-btn next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+    </div>
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>고객센터</h3>
+                <p class="contact-info">
+                    <strong>1544-0000</strong><br>
+                    평일 10:00 - 18:00<br>
+                    점심 12:30 - 13:30
+                </p>
+            </div>
+            <div class="footer-section">
+                <h3>회사정보</h3>
+                <p>
+                    상호명: (주)체험단플랫폼<br>
+                    대표: 홍길동<br>
+                    사업자등록번호: 000-00-00000
+                </p>
+            </div>
+            <div class="footer-section">
+                <h3>빠른링크</h3>
+                <ul>
+                    <li><a href="/about">회사소개</a></li>
+                    <li><a href="/terms">이용약관</a></li>
+                    <li><a href="/privacy">개인정보처리방침</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/campaign-slider.js"></script>
+    <script src="js/slider.js"></script>
+</body>
+</html> 

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - 체험단 플랫폼</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <a href="/" class="logo">
+                <img src="../images/logo.png" alt="로고">
+            </a>
+            <h2>회원가입</h2>
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input type="password" id="password" required>
+                    <p class="form-hint">8자 이상, 영문/숫자/특수문자 조합</p>
+                </div>
+                <div class="form-group">
+                    <label for="passwordConfirm">비밀번호 확인</label>
+                    <input type="password" id="passwordConfirm" required>
+                </div>
+                <div class="form-group">
+                    <label for="nickname">닉네임</label>
+                    <input type="text" id="nickname" required>
+                </div>
+                <div class="form-agreements">
+                    <label>
+                        <input type="checkbox" id="agreeAll">
+                        전체 동의
+                    </label>
+                    <label>
+                        <input type="checkbox" id="agreeTerms" required>
+                        이용약관 동의 (필수)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="agreePrivacy" required>
+                        개인정보 처리방침 동의 (필수)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="agreeMarketing">
+                        마케팅 정보 수신 동의 (선택)
+                    </label>
+                </div>
+                <button type="submit" class="auth-button">가입하기</button>
+            </form>
+            <p class="auth-footer">
+                이미 회원이신가요? <a href="/pages/login.html">로그인</a>
+            </p>
+        </div>
+    </div>
+    <script src="../js/auth.js"></script>
+</body>
+</html> 

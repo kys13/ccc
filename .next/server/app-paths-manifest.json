@@ -1,0 +1,12 @@
+{
+  "/page": "app/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/campaigns/popular/route": "app/api/campaigns/popular/route.js",
+  "/api/campaigns/route": "app/api/campaigns/route.js",
+  "/api/campaigns/ending-soon/route": "app/api/campaigns/ending-soon/route.js",
+  "/visit/page": "app/visit/page.js",
+  "/delivery/page": "app/delivery/page.js",
+  "/admin/users/page": "app/admin/users/page.js",
+  "/admin/settings/page": "app/admin/settings/page.js",
+  "/admin/page": "app/admin/page.js"
+}

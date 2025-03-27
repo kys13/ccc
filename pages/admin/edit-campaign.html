@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캠페인 수정 - 관리자</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin/campaign.css">
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- 사이드바는 유지 -->
+
+        <main class="admin-main">
+            <header class="content-header">
+                <h1>캠페인 수정</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="history.back()">취소</button>
+                    <button class="btn btn-primary" id="updateCampaign">변경사항 저장</button>
+                </div>
+            </header>
+
+            <div class="campaign-form">
+                <div class="form-grid">
+                    <div class="form-section">
+                        <h2>기본 정보</h2>
+                        <div class="form-group">
+                            <label for="campaignTitle">캠페인 제목</label>
+                            <input type="text" id="campaignTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="campaignStatus">상태</label>
+                            <select id="campaignStatus" required>
+                                <option value="active">진행중</option>
+                                <option value="pending">대기중</option>
+                                <option value="completed">완료</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="campaignCategory">카테고리</label>
+                            <select id="campaignCategory" required>
+                                <option value="restaurant">맛집</option>
+                                <option value="cafe">카페</option>
+                                <option value="beauty">뷰티</option>
+                                <option value="fashion">패션</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>모집 정보</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="startDate">시작일</label>
+                                <input type="date" id="startDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="endDate">종료일</label>
+                                <input type="date" id="endDate" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="recruitCount">모집 인원</label>
+                                <input type="number" id="recruitCount" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reward">리워드</label>
+                                <input type="text" id="reward" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>캠페인 상세</h2>
+                    <div class="form-group">
+                        <label>대표 이미지</label>
+                        <input type="file" class="filepond" name="mainImage" accept="image/*">
+                        <div class="current-image" id="currentImage"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>상세 내용</label>
+                        <div id="editor"></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>신청자 현황</h2>
+                    <div class="applicants-summary">
+                        <div class="summary-item">
+                            <span class="label">총 신청자</span>
+                            <span class="value" id="totalApplicants">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">승인 대기</span>
+                            <span class="value" id="pendingApplicants">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">승인 완료</span>
+                            <span class="value" id="approvedApplicants">0</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="viewApplicants">
+                        신청자 관리
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="../../js/admin/edit-campaign.js"></script>
+</body>
+</html> 

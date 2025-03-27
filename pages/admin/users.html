@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 관리 - 체험단 플랫폼</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin-users.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- 사이드바 메뉴 -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="../../images/logo.png" alt="로고" class="admin-logo">
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>대시보드</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="campaigns.html">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>캠페인 관리</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="users.html">
+                        <i class="fas fa-users"></i>
+                        <span>회원 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="reviews.html">
+                        <i class="fas fa-star"></i>
+                        <span>리뷰 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="notifications.html">
+                        <i class="fas fa-bell"></i>
+                        <span>알림 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="seo.html">
+                        <i class="fas fa-search"></i>
+                        <span>SEO 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="logout-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                    로그아웃
+                </button>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <div class="content-wrapper">
+                <header class="admin-header">
+                    <div class="header-left">
+                        <h1>회원 관리</h1>
+                    </div>
+                    <div class="header-right">
+                        <div class="admin-search">
+                            <input type="text" placeholder="회원 검색..." id="userSearch">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="user-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>전체 회원</h3>
+                            <p>1,234</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>신규 가입</h3>
+                            <p>28</p>
+                            <span class="stat-period">오늘</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>활성 회원</h3>
+                            <p>892</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>휴면 회원</h3>
+                            <p>342</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-filters">
+                    <div class="filter-group">
+                        <label>회원 상태</label>
+                        <select id="statusFilter">
+                            <option value="">전체</option>
+                            <option value="active">활성</option>
+                            <option value="inactive">휴면</option>
+                            <option value="suspended">정지</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>가입 경로</label>
+                        <select id="sourceFilter">
+                            <option value="">전체</option>
+                            <option value="email">이메일</option>
+                            <option value="kakao">카카오</option>
+                            <option value="naver">네이버</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>정렬</label>
+                        <select id="sortFilter">
+                            <option value="latest">최신순</option>
+                            <option value="campaigns">캠페인 참여순</option>
+                            <option value="reviews">리뷰 작성순</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="user-list">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll">
+                                </th>
+                                <th>회원 정보</th>
+                                <th>가입일</th>
+                                <th>가입 경로</th>
+                                <th>캠페인 참여</th>
+                                <th>리뷰</th>
+                                <th>상태</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- JavaScript로 데이터 삽입 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="page-button"><i class="fas fa-chevron-left"></i></button>
+                    <div class="page-numbers">
+                        <button class="page-number active">1</button>
+                        <button class="page-number">2</button>
+                        <button class="page-number">3</button>
+                        <span>...</span>
+                        <button class="page-number">10</button>
+                    </div>
+                    <button class="page-button"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../../js/admin/common.js"></script>
+    <script src="../../js/admin/users.js"></script>
+</body>
+</html> 

@@ -1,0 +1,116 @@
+/* 서브 페이지 공통 스타일 */
+.sub-nav {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    margin-top: 70px;
+}
+
+.sub-nav .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.category-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    height: 60px;
+    align-items: center;
+}
+
+.category-menu a {
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 1rem 0;
+    display: block;
+    position: relative;
+    font-weight: 500;
+}
+
+.category-menu a.active {
+    color: var(--primary-color);
+}
+
+.category-menu a.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary-color);
+}
+
+/* 서브 페이지 컨텐츠 영역 */
+.sub-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* 필터 섹션 */
+.filter-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.filter-label {
+    font-weight: 600;
+    min-width: 80px;
+}
+
+.filter-options {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-option {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: var(--light-gray);
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-option:hover,
+.filter-option.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .sub-nav .container {
+        padding: 0 1rem;
+    }
+    
+    .category-menu {
+        gap: 1rem;
+    }
+    
+    .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-options {
+        width: 100%;
+    }
+} 

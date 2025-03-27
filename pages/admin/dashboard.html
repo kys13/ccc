@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - 체험단 플랫폼</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin-dashboard.css">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <script src="../../js/admin/common.js" defer></script>
+    <script src="../../js/admin/dashboard.js" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="../../images/logo.png" alt="로고" class="admin-logo">
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>대시보드</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="campaigns.html">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>캠페인 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="users.html">
+                        <i class="fas fa-users"></i>
+                        <span>회원 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="reviews.html">
+                        <i class="fas fa-star"></i>
+                        <span>리뷰 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="notifications.html">
+                        <i class="fas fa-bell"></i>
+                        <span>알림 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="seo.html">
+                        <i class="fas fa-search"></i>
+                        <span>SEO 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="logout-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                    로그아웃
+                </button>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1>대시보드</h1>
+                <div class="admin-profile">
+                    <span class="admin-name">관리자</span>
+                    <img src="../../images/admin-avatar.jpg" alt="관리자">
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <header class="content-header">
+                    <h1>대시보드</h1>
+                    <div class="header-actions">
+                        <button id="refreshStats" class="btn btn-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <div class="date-range-picker" id="dateRange">
+                            <i class="fas fa-calendar"></i>
+                            <span>날짜 선택</span>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="real-time-container">
+                    <div class="real-time-header">
+                        <i class="fas fa-circle pulse"></i>
+                        <h2>실시간 현황</h2>
+                    </div>
+                    <div class="real-time-stats">
+                        <div class="real-time-stat">
+                            <div class="real-time-value" id="currentVisitors">0</div>
+                            <div class="real-time-label">현재 접속자</div>
+                        </div>
+                        <div class="real-time-stat">
+                            <div class="real-time-value" id="todayOrders">0</div>
+                            <div class="real-time-label">오늘 주문</div>
+                        </div>
+                        <div class="real-time-stat">
+                            <div class="real-time-value" id="activeUsers">0</div>
+                            <div class="real-time-label">활성 사용자</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">총 매출</div>
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-value">₩12,345,678</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>12.3%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">신규 회원</div>
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-value">1,234</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>5.2%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-title">페이지뷰</div>
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-value">45,678</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>2.1%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">방문자 통계</h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-sm" data-period="day">일간</button>
+                                <button class="btn btn-sm active" data-period="week">주간</button>
+                                <button class="btn btn-sm" data-period="month">월간</button>
+                            </div>
+                        </div>
+                        <canvas id="visitorChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">매출 통계</h3>
+                            <select class="chart-select" id="revenueType">
+                                <option value="total">전체</option>
+                                <option value="product">상품별</option>
+                                <option value="category">카테고리별</option>
+                            </select>
+                        </div>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="activity-card">
+                        <h3>최근 활동</h3>
+                        <div class="activity-list" id="recentActivities"></div>
+                    </div>
+                    <div class="alert-card">
+                        <h3>시스템 알림</h3>
+                        <div class="alert-list" id="systemAlerts"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="../../js/admin/dashboard.js"></script>
+</body>
+</html> 

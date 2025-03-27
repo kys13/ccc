@@ -1,0 +1,638 @@
+/* 캠페인 관리 페이지 스타일 */
+.campaign-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    min-width: 120px;
+}
+
+.campaign-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.campaign-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.campaign-card:hover {
+    transform: translateY(-2px);
+}
+
+.campaign-image {
+    position: relative;
+    padding-top: 56.25%;
+}
+
+.campaign-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.campaign-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: white;
+}
+
+.status-active { background: var(--primary-color); }
+.status-pending { background: #f39c12; }
+.status-completed { background: #95a5a6; }
+
+.campaign-content {
+    padding: 1.5rem;
+}
+
+.campaign-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.campaign-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-color-light);
+}
+
+.campaign-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.campaign-date {
+    font-size: 0.9rem;
+    color: var(--text-color-light);
+}
+
+.campaign-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 캠페인 수정 페이지 추가 스타일 */
+.current-image {
+    margin-top: 1rem;
+    max-width: 300px;
+}
+
+.current-image img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.applicants-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.summary-item {
+    background: var(--bg-light);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.summary-item .label {
+    display: block;
+    color: var(--text-color-light);
+    margin-bottom: 0.5rem;
+}
+
+.summary-item .value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+#viewApplicants {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* 폼 유효성 검사 스타일 */
+.form-group.error input,
+.form-group.error select {
+    border-color: var(--danger-color);
+}
+
+.form-group .error-message {
+    color: var(--danger-color);
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* 저장 중 상태 표시 */
+.btn-primary.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.btn-primary.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: button-loading 0.8s linear infinite;
+}
+
+@keyframes button-loading {
+    to { transform: rotate(360deg); }
+}
+
+/* 신청자 관리 페이지 스타일 */
+.campaign-info-banner {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.campaign-basic-info h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.campaign-meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--text-color-light);
+}
+
+.status-badge {
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    color: white;
+    background: var(--primary-color);
+}
+
+.applicant-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-item .label {
+    display: block;
+    color: var(--text-color-light);
+    margin-bottom: 0.5rem;
+}
+
+.stat-item .value {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.applicant-filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.bulk-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.applicant-table-wrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+}
+
+.applicant-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.applicant-table th,
+.applicant-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.applicant-table th {
+    background: var(--bg-light);
+    font-weight: 500;
+}
+
+.applicant-table tbody tr:hover {
+    background: var(--bg-light);
+}
+
+.applicant-table .status-cell {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.status-pending {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+}
+
+.status-approved {
+    background: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+}
+
+.status-rejected {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-buttons button {
+    padding: 0.4rem;
+    border-radius: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-color-light);
+    transition: all 0.2s ease;
+}
+
+.action-buttons button:hover {
+    color: var(--primary-color);
+    background: rgba(var(--primary-color-rgb), 0.1);
+}
+
+/* 체크박스 스타일 */
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.custom-checkbox input {
+    opacity: 0;
+    position: absolute;
+}
+
+.custom-checkbox input:checked + span {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.custom-checkbox input:checked + span::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* 모달 내 신청자 정보 스타일 */
+.applicant-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-group {
+    background: var(--bg-light);
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.info-group h3 {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: var(--text-color-light);
+}
+
+.info-item {
+    margin-bottom: 0.8rem;
+}
+
+.info-item .label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-color-light);
+    margin-bottom: 0.3rem;
+}
+
+.info-item .value {
+    font-weight: 500;
+}
+
+.sns-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.sns-link {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.sns-link:hover {
+    color: var(--primary-color);
+}
+
+/* 리뷰 관리 페이지 스타일 */
+.review-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-color-light);
+}
+
+.review-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.review-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.reviewer-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.reviewer-name {
+    font-weight: 500;
+}
+
+.review-date {
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+}
+
+.review-rating {
+    display: flex;
+    gap: 0.2rem;
+    color: #ffc107;
+    font-size: 1.2rem;
+}
+
+.review-content {
+    margin: 1rem 0;
+    line-height: 1.6;
+}
+
+.review-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.review-image {
+    position: relative;
+    padding-top: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.review-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.review-status {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.status-pending {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+}
+
+.status-approved {
+    background: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+}
+
+.status-rejected {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.review-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 리뷰 모달 추가 스타일 */
+.review-detail {
+    margin-bottom: 2rem;
+}
+
+.review-campaign-info {
+    background: var(--bg-light);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.review-feedback {
+    margin-top: 1.5rem;
+}
+
+.feedback-form textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    resize: vertical;
+} 

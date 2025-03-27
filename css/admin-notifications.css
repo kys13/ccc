@@ -1,0 +1,148 @@
+.content-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 2rem;
+}
+
+.admin-section {
+    margin-bottom: 2rem;
+}
+
+.admin-section:last-child {
+    margin-bottom: 0;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.filter-group select {
+    padding: 0.8rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    min-width: 150px;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.notification-icon.campaign {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.notification-icon.review {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.notification-icon.user {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.notification-icon.system {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.notification-time {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.notification-message {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.notification-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.8rem;
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-view {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.btn-delete {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+@media (max-width: 768px) {
+    .filter-group {
+        flex-direction: column;
+    }
+    
+    .filter-group select,
+    .filter-group button {
+        width: 100%;
+    }
+} 

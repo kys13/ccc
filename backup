@@ -1,0 +1,11 @@
+const uploadRoutes = require('./routes/upload');
+const responseMiddleware = require('./middlewares/response');
+
+// 기존 미들웨어들...
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// 응답 미들웨어 추가
+app.use(responseMiddleware);
+
+app.use('/api/upload', uploadRoutes); 

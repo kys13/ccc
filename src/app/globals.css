@@ -1,0 +1,345 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css');
+
+:root {
+  --font-main: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  --primary-color: #4f46e5;
+  --secondary-color: #4338ca;
+  --text-color: #111827;
+  --light-gray: #f3f4f6;
+  --border-color: #e5e7eb;
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --ring: #4f46e5;
+  --ring-offset: #ffffff;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    font-family: var(--font-main);
+    color: var(--text-color);
+    background-color: var(--light-gray);
+    line-height: 1.6;
+    letter-spacing: -0.3px;
+    @apply antialiased;
+  }
+
+  /* 접근성 개선 */
+  :focus-visible {
+    @apply outline-none ring-2 ring-indigo-600 ring-offset-2;
+  }
+
+  /* 스크롤바 스타일링 */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
+  }
+
+  /* 텍스트 선택 스타일링 */
+  ::selection {
+    @apply bg-indigo-100 text-indigo-900;
+  }
+
+  /* 기본 타이포그래피 */
+  h1 {
+    @apply text-3xl font-bold tracking-tight sm:text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold tracking-tight sm:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl font-medium tracking-tight sm:text-2xl;
+  }
+
+  /* 반응형 컨테이너 */
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+}
+
+@layer components {
+  /* 네비게이션 스타일 */
+  .main-nav {
+    @apply sticky top-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm;
+  }
+
+  .nav-wrapper {
+    @apply container;
+  }
+
+  .nav-content {
+    @apply flex justify-between h-16;
+  }
+
+  .nav-left {
+    @apply flex items-center;
+  }
+
+  .nav-menu {
+    @apply hidden sm:ml-6 sm:flex sm:space-x-8;
+  }
+
+  .nav-link {
+    @apply inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 
+           hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600
+           transition-colors focus:outline-none focus:text-indigo-600 focus:border-indigo-600;
+  }
+
+  .dropdown-menu {
+    @apply absolute z-10 hidden group-hover:block w-48 bg-white shadow-lg rounded-md py-1;
+  }
+
+  .dropdown-item {
+    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100;
+  }
+
+  /* 버튼 스타일 */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium
+           transition-all duration-200 ease-in-out
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-primary {
+    @apply bg-indigo-600 text-white hover:bg-indigo-700 
+           shadow-sm hover:shadow
+           h-10 px-4 py-2;
+  }
+
+  .btn-outline {
+    @apply border border-gray-300 hover:bg-gray-50 
+           text-gray-700 hover:text-gray-900
+           h-10 px-4 py-2;
+  }
+
+  /* 카드 스타일 */
+  .card {
+    @apply bg-white rounded-lg shadow-sm p-6
+           transition-all duration-200 ease-in-out
+           hover:shadow-md;
+  }
+
+  .card-header {
+    @apply flex justify-between items-start mb-4;
+  }
+
+  .card-title {
+    @apply text-lg font-semibold;
+  }
+
+  /* 필터 스타일 */
+  .filter-container {
+    @apply bg-white rounded-lg shadow-sm p-4 mb-6;
+  }
+
+  .filter-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4;
+  }
+
+  .filter-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  .filter-select {
+    @apply w-full rounded-md border border-gray-300 
+           focus:border-indigo-600 focus:ring-indigo-600
+           py-2 px-3;
+  }
+
+  /* 상태 배지 */
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .status-accepted {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .status-rejected {
+    @apply bg-red-100 text-red-800;
+  }
+
+  /* 알림 스타일 */
+  .notification-item {
+    @apply flex items-start gap-4 p-4 
+           hover:bg-gray-50 cursor-pointer 
+           transition-colors;
+  }
+
+  .notification-icon {
+    @apply flex-shrink-0 w-10 h-10 rounded-full 
+           bg-indigo-100 text-indigo-600 
+           flex items-center justify-center;
+  }
+
+  .notification-content {
+    @apply flex-grow min-w-0;
+  }
+
+  .notification-title {
+    @apply font-medium text-gray-900 truncate;
+  }
+
+  .notification-message {
+    @apply mt-1 text-sm text-gray-600 line-clamp-2;
+  }
+
+  .notification-time {
+    @apply text-sm text-gray-500;
+  }
+
+  /* 리뷰 스타일 */
+  .review-card {
+    @apply bg-white rounded-lg shadow-sm p-6 mb-4;
+  }
+
+  .review-header {
+    @apply flex justify-between items-start mb-4;
+  }
+
+  .review-title {
+    @apply text-lg font-semibold mb-2;
+  }
+
+  .review-meta {
+    @apply text-sm text-gray-600;
+  }
+
+  .review-content {
+    @apply text-gray-700 text-sm leading-relaxed whitespace-pre-wrap break-words;
+  }
+
+  .review-rating {
+    @apply flex items-center gap-1 text-yellow-400;
+  }
+
+  /* 로딩 애니메이션 */
+  .loading-spinner {
+    @apply animate-spin rounded-full h-12 w-12 
+           border-4 border-gray-200 border-t-indigo-600;
+  }
+
+  /* 캠페인 카드 */
+  .campaign-card {
+    @apply bg-white rounded-lg shadow-sm overflow-hidden 
+           transition-all duration-300 ease-in-out 
+           hover:shadow-lg hover:scale-[1.02];
+  }
+
+  .campaign-image {
+    @apply relative h-48;
+  }
+
+  .campaign-content {
+    @apply p-4;
+  }
+
+  .campaign-title {
+    @apply text-lg font-semibold line-clamp-2 
+           group-hover:text-indigo-600 
+           transition-colors;
+  }
+
+  .campaign-meta {
+    @apply text-sm text-gray-500;
+  }
+
+  .campaign-reward {
+    @apply font-semibold text-indigo-600;
+  }
+
+  /* 모바일 최적화 */
+  @media (max-width: 640px) {
+    .container {
+      @apply px-4;
+    }
+
+    .nav-menu {
+      @apply fixed bottom-0 left-0 right-0 
+             flex justify-around items-center 
+             bg-white border-t border-gray-200 
+             py-2 px-4;
+    }
+
+    .nav-link {
+      @apply flex flex-col items-center 
+             text-xs border-none 
+             py-1;
+    }
+
+    .card {
+      @apply p-4;
+    }
+
+    .filter-container {
+      @apply p-3;
+    }
+  }
+
+  /* 다크 모드 지원 */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text-color: #f3f4f6;
+      --light-gray: #1f2937;
+      --border-color: #374151;
+      --ring-offset: #111827;
+    }
+
+    body {
+      @apply bg-gray-900;
+    }
+
+    .card,
+    .filter-container {
+      @apply bg-gray-800 border-gray-700;
+    }
+
+    .nav-link {
+      @apply text-gray-300 hover:text-indigo-400;
+    }
+
+    .btn-outline {
+      @apply border-gray-600 text-gray-300 
+             hover:bg-gray-700 hover:text-gray-100;
+    }
+
+    .status-badge {
+      @apply bg-opacity-20;
+    }
+  }
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .nav-menu {
+    @apply hidden;
+  }
+
+  .filter-grid {
+    @apply grid-cols-1;
+  }
+} 

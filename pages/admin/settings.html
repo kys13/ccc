@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>설정 - 관리자 페이지</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/admin.css">
+    <link rel="stylesheet" href="../../css/admin-settings.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- 사이드바 메뉴 -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="../../images/logo.png" alt="로고" class="admin-logo">
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i>
+                        <span>대시보드</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="campaigns.html">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>캠페인 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="users.html">
+                        <i class="fas fa-users"></i>
+                        <span>회원 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="reviews.html">
+                        <i class="fas fa-star"></i>
+                        <span>리뷰 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="notifications.html">
+                        <i class="fas fa-bell"></i>
+                        <span>알림 관리</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="seo.html">
+                        <i class="fas fa-search"></i>
+                        <span>SEO 관리</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>설정</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="logout-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                    로그아웃
+                </button>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <div class="content-wrapper">
+                <header class="admin-header">
+                    <div class="header-left">
+                        <h1>설정</h1>
+                    </div>
+                </header>
+
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h2>사이트 설정</h2>
+                        <form id="siteSettingsForm">
+                            <div class="form-group">
+                                <label>사이트 이름</label>
+                                <input type="text" name="siteName" value="체험단 플랫폼">
+                            </div>
+                            <div class="form-group">
+                                <label>사이트 설명</label>
+                                <textarea name="siteDescription">최고의 체험단 플랫폼</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>로고</label>
+                                <div class="logo-upload">
+                                    <img src="../../images/logo.png" alt="현재 로고">
+                                    <input type="file" name="logo" accept="image/*">
+                                </div>
+                            </div>
+                            <button type="submit" class="save-button">저장</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>알림 설정</h2>
+                        <form id="notificationSettingsForm">
+                            <div class="form-group">
+                                <label>이메일 알림</label>
+                                <div class="toggle-group">
+                                    <label class="toggle">
+                                        <input type="checkbox" name="emailNewCampaign" checked>
+                                        <span class="toggle-slider"></span>
+                                        새 캠페인 등록
+                                    </label>
+                                    <label class="toggle">
+                                        <input type="checkbox" name="emailNewReview" checked>
+                                        <span class="toggle-slider"></span>
+                                        새 리뷰 등록
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>푸시 알림</label>
+                                <div class="toggle-group">
+                                    <label class="toggle">
+                                        <input type="checkbox" name="pushNewApplication">
+                                        <span class="toggle-slider"></span>
+                                        새 신청자 알림
+                                    </label>
+                                    <label class="toggle">
+                                        <input type="checkbox" name="pushReviewAlert">
+                                        <span class="toggle-slider"></span>
+                                        리뷰 마감 알림
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="save-button">저장</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>보안 설정</h2>
+                        <form id="securitySettingsForm">
+                            <div class="form-group">
+                                <label>2단계 인증</label>
+                                <div class="toggle-group">
+                                    <label class="toggle">
+                                        <input type="checkbox" name="twoFactorAuth">
+                                        <span class="toggle-slider"></span>
+                                        관리자 2단계 인증 사용
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>비밀번호 정책</label>
+                                <div class="checkbox-group">
+                                    <label>
+                                        <input type="checkbox" name="passwordUppercase" checked>
+                                        대문자 포함 필수
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="passwordNumber" checked>
+                                        숫자 포함 필수
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" name="passwordSpecial" checked>
+                                        특수문자 포함 필수
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="save-button">저장</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/admin/common.js"></script>
+    <script src="../../js/admin/settings.js"></script>
+</body>
+</html> 
