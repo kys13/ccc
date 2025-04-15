@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient, Prisma } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { getToken } from 'next-auth/jwt';
 
 const prisma = new PrismaClient();
 
@@ -25,49 +25,78 @@ interface CampaignCreateBody {
   status?: CampaignStatus;
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
+    // 인증 확인 (서버 세션 또는 JWT 토큰)
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== 'ADMIN') {
+    const token = await getToken({ 
+      req: request, 
+      secret: process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET 
+    });
+
+    // 세션 또는 토큰에서 관리자 권한 확인
+    const isAdmin = 
+      (session?.user?.role === 'ADMIN') || 
+      (token?.role === 'ADMIN');
+
+    if (!isAdmin) {
+      console.error('[API] Admin campaigns access denied: Not an admin');
       return NextResponse.json(
-        { message: '관리자 권한이 필요합니다.' },
+        { error: '관리자 권한이 필요합니다.' },
         { status: 403 }
       );
     }
 
-    // URL 파라미터 파싱
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const status = searchParams.get('status');
+    // 페이지네이션과 필터링 파라미터
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get('page') || '1');
+    const limit = parseInt(url.searchParams.get('limit') || '10');
+    const status = url.searchParams.get('status') || '';
+    const skip = (page - 1) * limit;
 
-    // 캠페인 조회
+    // 필터 조건 구성
     const where = status ? { status } : {};
+
+    // 캠페인 데이터 조회
     const [campaigns, total] = await Promise.all([
       prisma.campaign.findMany({
-        where,
-        skip: (page - 1) * limit,
+        skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        where,
         include: {
           location: true,
           visitCategory: true,
           deliveryCategory: true,
+          _count: {
+            select: {
+              applications: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
         },
       }),
       prisma.campaign.count({ where }),
     ]);
 
+    // 응답 데이터 정리
+    const formattedCampaigns = campaigns.map((campaign) => ({
+      ...campaign,
+      currentParticipants: campaign._count.applications,
+      _count: undefined,
+    }));
+
     return NextResponse.json({
-      campaigns,
+      campaigns: formattedCampaigns,
       total,
       page,
       totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
-    console.error('Get admin campaigns error:', error);
+    console.error('Campaign list fetch error:', error);
     return NextResponse.json(
-      { message: '캠페인 목록을 가져오는 중 오류가 발생했습니다.' },
+      { error: '캠페인 목록을 가져오는데 실패했습니다.' },
       { status: 500 }
     );
   }

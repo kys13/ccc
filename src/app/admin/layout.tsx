@@ -19,7 +19,7 @@ import {
 const menuItems = [
   {
     title: '대시보드',
-    href: '/admin',
+    href: '/admin/dashboard',
     icon: LayoutDashboard,
   },
   {
@@ -51,15 +51,7 @@ export default function AdminLayout({
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const pathname = usePathname();
-  const { user, logout } = useAuth();
-
-  if (!user || user.role !== 'ADMIN') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-xl text-gray-600">관리자 권한이 필요합니다.</p>
-      </div>
-    );
-  }
+  const { logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-100">

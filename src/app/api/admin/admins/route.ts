@@ -1,44 +1,27 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { headers } from 'next/headers';
-import jwt from 'jsonwebtoken';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth'; // Assuming authOptions is imported
 
 const prisma = new PrismaClient();
 
-// 토큰 검증 함수
-async function verifyToken(token: string) {
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-    return decoded;
-  } catch (error) {
-    return null;
-  }
-}
+// 별도의 verifyToken 함수 제거
+// async function verifyToken(token: string) { ... }
 
 export async function GET(request: Request) {
   try {
-    // 토큰 확인
-    const headersList = headers();
-    const authHeader = headersList.get('authorization');
+    // next-auth 세션 확인
+    const session = await getServerSession(authOptions);
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { message: '인증이 필요합니다.' },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.split(' ')[1];
-    const decoded = await verifyToken(token);
-
-    if (!decoded || decoded.role !== 'ADMIN') {
+    // 세션이 없거나 역할이 ADMIN이 아니면 접근 거부
+    if (!session || session.user.role !== 'ADMIN') {
       return NextResponse.json(
         { message: '관리자 권한이 필요합니다.' },
-        { status: 403 }
+        { status: 403 } // 401 대신 403이 더 적절할 수 있음
       );
     }
 
-    // 관리자 목록 조회
+    // 관리자 목록 조회 (헤더 파싱 및 verifyToken 제거)
     const admins = await prisma.user.findMany({
       where: {
         role: 'ADMIN'

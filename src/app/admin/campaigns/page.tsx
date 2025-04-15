@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import type { Campaign } from '@/types/campaign';
 import Link from 'next/link';
+import { getWithAuth, patchWithAuth, deleteWithAuth } from '@/lib/api/withAuth';
 
 interface CampaignListResponse {
     campaigns: Campaign[];
@@ -33,17 +34,17 @@ export default function AdminCampaigns() {
         try {
             setIsLoading(true);
 
-            const response = await fetch(`/api/admin/campaigns?page=${currentPage}&status=${selectedStatus}`);
-
-            if (!response.ok) {
-                if (response.status === 403) {
+            try {
+                const responseData = await getWithAuth<CampaignListResponse>(
+                    `/api/admin/campaigns?page=${currentPage}&status=${selectedStatus}`
+                );
+                setData(responseData);
+            } catch (err: any) {
+                if (err.message === '관리자 권한이 필요합니다.') {
                     throw new Error('관리자 권한이 필요합니다.');
                 }
-                throw new Error('Failed to fetch campaigns');
+                throw err;
             }
-
-            const responseData = await response.json();
-            setData(responseData);
         } catch (err: any) {
             setError(err.message || '캠페인 목록을 불러오는데 실패했습니다.');
             console.error('Campaign fetch error:', err);
@@ -67,14 +68,7 @@ export default function AdminCampaigns() {
         }
 
         try {
-            const response = await fetch(`/api/admin/campaigns/${id}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete campaign');
-            }
-
+            await deleteWithAuth(`/api/admin/campaigns/${id}`);
             showToast('캠페인이 삭제되었습니다.', 'success');
             fetchCampaigns();
         } catch (err: any) {
@@ -85,15 +79,7 @@ export default function AdminCampaigns() {
 
     const handleStatusChange = async (campaignId: number, status: string) => {
         try {
-            const response = await fetch(`/api/admin/campaigns/${campaignId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to update campaign status');
-            }
-
+            await patchWithAuth(`/api/admin/campaigns/${campaignId}`, { status });
             showToast('캠페인 상태가 업데이트되었습니다.', 'success');
             fetchCampaigns();
         } catch (error: any) {
@@ -224,7 +210,7 @@ export default function AdminCampaigns() {
                                         {formatDate(campaign.startDate)}
                                     </div>
                                     <div className="text-sm text-gray-500">
-                                        ~ {formatDate(campaign.endDate)}
+                                        ~ {formatDate(campaign.endDate ? campaign.endDate : '')}
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

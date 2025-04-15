@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import type { User } from '@/types/user';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,7 +21,7 @@ interface UserStats {
 
 export default function AdminUsers() {
     const router = useRouter();
-    const { isAdmin, token, checkAuth } = useAuth();
+    const { user, isAuthenticated, isAdmin } = useAuth();
     const { showToast } = useToast();
     const [data, setData] = useState<UserListResponse>({
         users: [],
@@ -41,53 +41,44 @@ export default function AdminUsers() {
     const [selectedRole, setSelectedRole] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
 
-    useEffect(() => {
-        const checkAdminAndFetch = async () => {
-            if (!isAdmin || !token) {
-                router.push('/admin/login');
-                return;
-            }
-            await fetchData();
-        };
-
-        checkAdminAndFetch();
-    }, [isAdmin, token, currentPage, searchTerm, selectedRole, selectedStatus]);
-
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
+        setIsLoading(true);
         try {
-            setIsLoading(true);
-            if (!token) {
-                throw new Error('인증 토큰이 없습니다.');
-            }
-
-            const [usersResponse, statsResponse] = await Promise.all([
-                fetch(`/api/admin/users?page=${currentPage}&limit=10&search=${searchTerm}&role=${selectedRole}&status=${selectedStatus}`, {
+            // 사용자 목록 가져오기
+            const response = await fetch(
+                `/api/admin/users?page=${currentPage}&limit=10&search=${searchTerm}&role=${selectedRole}&status=${selectedStatus}`,
+                {
+                    credentials: 'include',
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Content-Type': 'application/json'
                     }
-                }),
-                fetch('/api/admin/users/stats', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                })
-            ]);
-
-            if (!usersResponse.ok || !statsResponse.ok) {
-                if (usersResponse.status === 401 || statsResponse.status === 401) {
-                    await checkAuth();
-                    throw new Error('인증이 필요합니다.');
+                }
+            );
+            
+            if (!response.ok) {
+                if (response.status === 401) {
+                    console.error('인증 오류: 토큰이 없거나 만료됨');
+                    showToast('인증이 필요합니다. 다시 로그인해주세요.', 'error');
+                    router.push('/admin/login?returnTo=/admin/users');
+                    return;
                 }
                 throw new Error('Failed to fetch data');
             }
+            const data = await response.json();
+            setData(data);
 
-            const [usersData, statsData] = await Promise.all([
-                usersResponse.json(),
-                statsResponse.json()
-            ]);
+            // 사용자 통계 가져오기
+            const statsResponse = await fetch('/api/admin/users/stats', {
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
-            setData(usersData);
-            setStats(statsData);
+            if (statsResponse.ok) {
+                const statsData = await statsResponse.json();
+                setStats(statsData);
+            }
         } catch (err: any) {
             setError(err.message || '데이터를 불러오는데 실패했습니다.');
             console.error('Users fetch error:', err);
@@ -95,7 +86,15 @@ export default function AdminUsers() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [currentPage, searchTerm, selectedRole, selectedStatus, showToast, router]);
+
+    useEffect(() => {
+        if (!isAuthenticated || !isAdmin) {
+            router.push('/admin/login');
+            return;
+        }
+        fetchData();
+    }, [isAuthenticated, isAdmin, router, fetchData]);
 
     const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -109,23 +108,20 @@ export default function AdminUsers() {
         }
 
         try {
-            if (!token) {
-                throw new Error('인증 토큰이 없습니다.');
-            }
-
             const response = await fetch(`/api/admin/users/${userId}`, {
                 method: 'PATCH',
+                credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ status: newStatus }),
             });
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    await checkAuth();
-                    throw new Error('인증이 필요합니다.');
+                    showToast('인증이 필요합니다. 다시 로그인해주세요.', 'error');
+                    router.push('/admin/login?returnTo=/admin/users');
+                    return;
                 }
                 throw new Error('Failed to update user status');
             }
@@ -144,23 +140,20 @@ export default function AdminUsers() {
         }
 
         try {
-            if (!token) {
-                throw new Error('인증 토큰이 없습니다.');
-            }
-
             const response = await fetch(`/api/admin/users/${userId}`, {
                 method: 'PATCH',
+                credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ role: newRole }),
             });
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    await checkAuth();
-                    throw new Error('인증이 필요합니다.');
+                    showToast('인증이 필요합니다. 다시 로그인해주세요.', 'error');
+                    router.push('/admin/login?returnTo=/admin/users');
+                    return;
                 }
                 throw new Error('Failed to update user role');
             }
@@ -179,21 +172,19 @@ export default function AdminUsers() {
         }
 
         try {
-            if (!token) {
-                throw new Error('인증 토큰이 없습니다.');
-            }
-
             const response = await fetch(`/api/admin/users/${userId}`, {
                 method: 'DELETE',
+                credentials: 'include',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 }
             });
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    await checkAuth();
-                    throw new Error('인증이 필요합니다.');
+                    showToast('인증이 필요합니다. 다시 로그인해주세요.', 'error');
+                    router.push('/admin/login?returnTo=/admin/users');
+                    return;
                 }
                 throw new Error('Failed to delete user');
             }

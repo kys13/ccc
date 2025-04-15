@@ -2,18 +2,31 @@ export interface Campaign {
     id: number;
     title: string;
     description: string;
-    image_url: string;
-    category: string;
-    status: 'ongoing' | 'upcoming' | 'completed';
-    region: string;
-    sns_type: string;
-    reward_amount: number;
-    deadline: string;
-    max_applicants: number;
-    current_applicants: number;
-    created_at: string;
-    updated_at: string;
-    is_bookmarked?: boolean;
+    imageUrl?: string | null;
+    reward: number;
+    maxParticipants: number;
+    currentParticipants: number;
+    startDate: string | Date;
+    endDate: string | Date;
+    locationData?: any | null;
+    snsTypes: string[];
+    requirements: string;
+    reviewTemplate?: string | null;
+    status: string;
+    isVisible: boolean;
+    showPopular?: boolean;
+    showDeadline?: boolean;
+    showLatest?: boolean;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+    visitCategoryId?: number | null;
+    deliveryCategoryId?: number | null;
+    locationId?: number | null;
+    categories?: { id: number; name: string }[];
+    isBookmarked?: boolean;
+    locationCity?: string;
+    locationDistrict?: string;
+    categoryNames?: string[];
 }
 
 export interface CampaignFilters {

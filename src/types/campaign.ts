@@ -1,3 +1,5 @@
+import { Campaign as PrismaCampaign, Location, VisitCategory, DeliveryCategory, CampaignApplication, Review, CampaignCategory, Notification, SEO } from '@prisma/client';
+
 export type CampaignType = 'visit' | 'delivery';
 export type CampaignStatus = 'PENDING' | 'ONGOING' | 'COMPLETED';
 
@@ -11,52 +13,33 @@ export interface Campaign {
   currentParticipants: number;
   startDate: string;
   endDate: string;
+  locationData: any | null;
   snsTypes: string[];
   requirements: string;
+  reviewTemplate: string | null;
   status: CampaignStatus;
   isVisible: boolean;
-  showLatest: boolean;
   showPopular: boolean;
   showDeadline: boolean;
-  visitCategory?: {
-    id: number;
-    name: string;
-    description?: string;
-  };
-  deliveryCategory?: {
-    id: number;
-    name: string;
-    description?: string;
-  };
-  location?: {
-    id: number;
-    city: string;
-    district: string;
-    address: string;
-  };
-  categories: {
-    id: number;
-    name: string;
-  }[];
-  createdAt: Date;
-  updatedAt: Date;
+  showLatest: boolean;
+  createdAt: string;
+  updatedAt: string;
+  visitCategoryId: number | null;
+  deliveryCategoryId: number | null;
+  locationId: number | null;
+  location?: Location | null;
+  visitCategory?: VisitCategory | null;
+  deliveryCategory?: DeliveryCategory | null;
+  categories: CampaignCategory[];
+  applications: CampaignApplication[];
+  reviews: Review[];
+  notifications?: Notification[];
+  seo?: SEO | null;
   is_bookmarked?: boolean;
-  
-  // Relations
-  applications: {
-    status: string;
-  }[];
-  reviews: {
-    id: number;
-    title: string;
-    content: string;
-    rating: number;
-    status: string;
-    createdAt: Date;
-    user: {
-      name: string | null;
-    };
-  }[];
+  _count?: {
+    applications?: number;
+    reviews?: number;
+  };
 }
 
 export interface CampaignCreateData {

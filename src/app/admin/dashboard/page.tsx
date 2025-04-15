@@ -4,68 +4,101 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import Link from 'next/link';
-import { Users, FileText, CheckCircle, XCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, ShoppingBag, FileText, TrendingUp, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { LineChart } from '@/components/ui/charts/LineChart';
+import { PieChart } from '@/components/ui/charts/PieChart';
+
+// 통계 데이터를 위한 타입 정의
+interface RecentApplication {
+  id: number;
+  createdAt: string; // ISO 날짜 형식
+  campaign: any;
+  user: any;
+}
+
+interface CategoryStat {
+  id: number;
+  name: string;
+  _count: {
+    campaigns: number;
+  };
+}
 
 interface DashboardStats {
   totalUsers: number;
   totalCampaigns: number;
   totalApplications: number;
+  activeCampaigns: number;
   pendingApplications: number;
   approvedApplications: number;
   rejectedApplications: number;
+  recentApplications: RecentApplication[];
+  categoryStats: CategoryStat[];
 }
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { user, isAdmin, token, checkAuth } = useAuth();
+  const { user, isAuthenticated, isAdmin } = useAuth();
   const { showToast } = useToast();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalUsers: 0,
+    totalCampaigns: 0,
+    totalApplications: 0,
+    activeCampaigns: 0,
+    pendingApplications: 0,
+    approvedApplications: 0,
+    rejectedApplications: 0,
+    recentApplications: [],
+    categoryStats: []
+  });
 
   useEffect(() => {
-    const checkAdminAndFetch = async () => {
-      if (!isAdmin || !token) {
-        router.push('/admin/login');
+    const checkAuth = async () => {
+      if (!isAuthenticated) {
+        router.push('/admin/login?returnTo=/admin/dashboard');
         return;
       }
-      await fetchStats();
+
+      if (!isAdmin) {
+        showToast('관리자 권한이 필요합니다.', 'error');
+        router.push('/');
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/admin/stats', {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            showToast('인증이 필요합니다. 다시 로그인해주세요.', 'error');
+            router.push('/admin/login?returnTo=/admin/dashboard');
+            return;
+          }
+          throw new Error('데이터를 불러오는데 실패했습니다.');
+        }
+
+        const data = await response.json();
+        setStats(data);
+      } catch (err) {
+        console.error('Dashboard stats fetch error:', err);
+        showToast('대시보드 데이터를 불러오는데 실패했습니다.', 'error');
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    checkAdminAndFetch();
-  }, [isAdmin, token]);
+    checkAuth();
+  }, [isAuthenticated, isAdmin, router, showToast]);
 
-  const fetchStats = async () => {
-    try {
-      if (!token) {
-        throw new Error('인증 토큰이 없습니다.');
-      }
-
-      const response = await fetch('/api/admin/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          await checkAuth();
-          throw new Error('인증이 필요합니다.');
-        }
-        throw new Error('Failed to fetch stats');
-      }
-
-      const data = await response.json();
-      setStats(data);
-    } catch (error: any) {
-      showToast(error.message || '통계 정보를 불러오는데 실패했습니다.', 'error');
-      console.error('Stats fetch error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
@@ -73,212 +106,154 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!stats) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">통계 정보를 불러올 수 없습니다.</p>
-      </div>
-    );
-  }
+  const applicationChartData = {
+    labels: stats.recentApplications.map(app => 
+      new Date(app.createdAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+    ).reverse(),
+    datasets: [
+      {
+        label: '신청 수',
+        data: stats.recentApplications.map(app => 1).reverse(),
+        borderColor: 'rgb(59, 130, 246)',
+        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+      },
+    ],
+  };
 
-  const menuItems = [
-    {
-      title: '캠페인 관리',
-      description: '캠페인 목록 조회 및 관리',
-      link: '/admin/campaigns',
-      icon: (
-        <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-      ),
-    },
-    {
-      title: '리뷰 관리',
-      description: '캠페인 리뷰 승인 및 관리',
-      link: '/admin/reviews',
-      icon: (
-        <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-        </svg>
-      ),
-    },
-    {
-      title: '회원 관리',
-      description: '사용자 계정 관리',
-      link: '/admin/users',
-      icon: (
-        <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-      ),
-    },
-    {
-      title: '통계',
-      description: '캠페인 및 사용자 통계',
-      link: '/admin/statistics',
-      icon: (
-        <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-      ),
-    },
-  ];
+  const categoryChartData = {
+    labels: stats.categoryStats.map(stat => stat.name),
+    datasets: [
+      {
+        data: stats.categoryStats.map(stat => stat._count.campaigns),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(54, 162, 235, 0.5)',
+          'rgba(255, 206, 86, 0.5)',
+          'rgba(75, 192, 192, 0.5)',
+          'rgba(153, 102, 255, 0.5)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="md:flex md:items-center md:justify-between mb-8">
-          <div className="flex-1 min-w-0">
-            <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-              관리자 대시보드
-            </h2>
-          </div>
-        </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">대시보드</h1>
+        <p className="text-muted-foreground">
+          {new Date().toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long',
+          })}
+        </p>
+      </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <Users className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      총 사용자
-                    </dt>
-                    <dd className="text-lg font-semibold text-gray-900">
-                      {stats.totalUsers}명
-                    </dd>
-                  </dl>
-                </div>
-              </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">전체 회원</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalUsers}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">전체 캠페인</CardTitle>
+            <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalCampaigns}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">전체 신청</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalApplications}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">진행중인 캠페인</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.activeCampaigns}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">대기중인 신청</CardTitle>
+            <Clock className="h-4 w-4 text-yellow-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.pendingApplications}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">승인된 신청</CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.approvedApplications}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">거절된 신청</CardTitle>
+            <XCircle className="h-4 w-4 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.rejectedApplications}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>최근 신청 현황</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <LineChart data={applicationChartData} />
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <FileText className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      총 캠페인
-                    </dt>
-                    <dd className="text-lg font-semibold text-gray-900">
-                      {stats.totalCampaigns}개
-                    </dd>
-                  </dl>
-                </div>
-              </div>
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>카테고리별 캠페인</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <PieChart data={categoryChartData} />
             </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <CheckCircle className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      총 신청
-                    </dt>
-                    <dd className="text-lg font-semibold text-gray-900">
-                      {stats.totalApplications}건
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="h-6 w-6 text-yellow-400">⌛</div>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      대기중인 신청
-                    </dt>
-                    <dd className="text-lg font-semibold text-gray-900">
-                      {stats.pendingApplications}건
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <CheckCircle className="h-6 w-6 text-green-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      승인된 신청
-                    </dt>
-                    <dd className="text-lg font-semibold text-gray-900">
-                      {stats.approvedApplications}건
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <XCircle className="h-6 w-6 text-red-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      거절된 신청
-                    </dt>
-                    <dd className="text-lg font-semibold text-gray-900">
-                      {stats.rejectedApplications}건
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {menuItems.map((item) => (
-            <Link
-              key={item.title}
-              href={item.link}
-              className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
-            >
-              <div className="flex-shrink-0">
-                {item.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="absolute inset-0" aria-hidden="true" />
-                <p className="text-sm font-medium text-gray-900">
-                  {item.title}
-                </p>
-                <p className="text-sm text-gray-500 truncate">
-                  {item.description}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
