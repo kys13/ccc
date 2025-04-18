@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/admin/login/page": [
+    "/admin/dashboard/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/login/page.js"
+      "static/chunks/app/admin/dashboard/page.js"
     ],
     "/admin/layout": [
       "static/chunks/webpack.js",
@@ -21,31 +21,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/loading.js"
     ],
-    "/admin/dashboard/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/dashboard/page.js"
-    ],
-    "/admin/campaigns/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/campaigns/page.js"
-    ],
-    "/admin/users/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/users/page.js"
-    ],
-    "/admin/applications/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/applications/page.js"
-    ],
-    "/admin/settings/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/settings/page.js"
-    ],
     "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -61,25 +36,25 @@
       "static/chunks/main-app.js",
       "static/chunks/app/campaigns/[id]/loading.js"
     ],
-    "/mypage/page": [
+    "/admin/campaigns/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/mypage/page.js"
+      "static/chunks/app/admin/campaigns/page.js"
     ],
-    "/mypage/layout": [
+    "/admin/applications/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/mypage/layout.js"
+      "static/chunks/app/admin/applications/page.js"
     ],
-    "/mypage/campaigns/page": [
+    "/admin/users/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/mypage/campaigns/page.js"
+      "static/chunks/app/admin/users/page.js"
     ],
-    "/mypage/reviews/page": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/mypage/reviews/page.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }
