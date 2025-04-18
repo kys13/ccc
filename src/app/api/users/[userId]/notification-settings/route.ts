@@ -3,6 +3,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+// 기본 설정 값
+const defaultSettings = {
+  campaign: { email: true, sms: false, push: true },
+  review: { email: true, sms: false, push: true },
+  system: { email: true, sms: false, push: true },
+};
+
 export async function GET(
   request: Request,
   { params }: { params: { userId: string } }
@@ -13,28 +20,29 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (session.user.id !== params.userId) {
+    const userIdInt = parseInt(params.userId);
+    if (isNaN(userIdInt)) {
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    }
+
+    if (session.user.id !== userIdInt) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const settings = await prisma.notificationSettings.findUnique({
-      where: { userId: params.userId },
+    let settings = await prisma.notificationSettings.findUnique({
+      where: { userId: userIdInt },
     });
-
+    
+    // 설정이 없으면 기본값으로 생성 후 반환
     if (!settings) {
-      const newSettings = await prisma.notificationSettings.create({
+      settings = await prisma.notificationSettings.create({
         data: {
-          userId: params.userId,
-          emailNotifications: true,
-          pushNotifications: true,
-          campaignUpdates: true,
-          applicationStatus: true,
-          reviewReminders: true,
+          userId: userIdInt,
+          ...defaultSettings, // 기본값 사용
         },
       });
-      return NextResponse.json(newSettings);
     }
-
+    // Prisma Json 타입은 자동으로 객체로 파싱됨
     return NextResponse.json(settings);
   } catch (error) {
     console.error('Error fetching notification settings:', error);
@@ -55,29 +63,30 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (session.user.id !== params.userId) {
+    const userIdInt = parseInt(params.userId);
+    if (isNaN(userIdInt)) {
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    }
+
+    if (session.user.id !== userIdInt) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();
-    const { emailNotifications, pushNotifications, campaignUpdates, applicationStatus, reviewReminders } = body;
+    const { campaign, review, system } = body;
 
     const settings = await prisma.notificationSettings.upsert({
-      where: { userId: params.userId },
+      where: { userId: userIdInt },
       create: {
-        userId: params.userId,
-        emailNotifications,
-        pushNotifications,
-        campaignUpdates,
-        applicationStatus,
-        reviewReminders,
+        userId: userIdInt,
+        campaign: campaign ?? defaultSettings.campaign,
+        review: review ?? defaultSettings.review,
+        system: system ?? defaultSettings.system,
       },
       update: {
-        emailNotifications,
-        pushNotifications,
-        campaignUpdates,
-        applicationStatus,
-        reviewReminders,
+        ...(campaign !== undefined && { campaign }),
+        ...(review !== undefined && { review }),
+        ...(system !== undefined && { system }),
       },
     });
 

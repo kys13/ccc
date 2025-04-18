@@ -17,37 +17,50 @@ export async function GET(
       );
     }
 
-    if (session.user.id !== params.userId) {
-      return new NextResponse(
-        JSON.stringify({ message: '권한이 없습니다.' }),
-        { status: 403 }
-      );
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const applications = await prisma.campaignApplication.findMany({
-      where: {
-        userId: params.userId,
-      },
-      include: {
-        campaign: {
-          select: {
-            id: true,
-            title: true,
-            endDate: true,
-          },
-        },
-        review: {
-          select: {
-            id: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const userIdInt = parseInt(params.userId);
+    if (isNaN(userIdInt)) {
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    }
 
-    return NextResponse.json(applications);
+    if (session.user.id !== userIdInt) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const [applications, total] = await Promise.all([
+      prisma.campaignApplication.findMany({
+        where: {
+          userId: userIdInt,
+        },
+        include: {
+          campaign: {
+            select: {
+              id: true,
+              title: true,
+              endDate: true,
+            },
+          },
+          review: {
+            select: {
+              id: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      prisma.campaignApplication.count({
+        where: {
+          userId: userIdInt,
+        }
+      })
+    ]);
+
+    return NextResponse.json({ applications, total });
   } catch (error) {
     console.error('Error fetching applications:', error);
     return new NextResponse(

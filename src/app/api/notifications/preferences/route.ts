@@ -1,125 +1,113 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { NotificationType, NotificationChannel } from '@prisma/client';
+
+const NOTIFICATION_TYPES = ['campaign', 'review', 'system'] as const;
+const NOTIFICATION_CHANNELS = ['email', 'sms', 'push'] as const;
+
+type NotificationType = typeof NOTIFICATION_TYPES[number];
+type NotificationChannel = typeof NOTIFICATION_CHANNELS[number];
+
+interface NotificationSettings {
+  [key: string]: {
+    email?: boolean;
+    sms?: boolean;
+    push?: boolean;
+  };
+}
+
+function isValidNotificationType(type: string): type is NotificationType {
+  return NOTIFICATION_TYPES.includes(type as NotificationType);
+}
+
+function isValidNotificationChannel(channel: string): channel is NotificationChannel {
+  return NOTIFICATION_CHANNELS.includes(channel as NotificationChannel);
+}
 
 // GET /api/notifications/preferences
-export async function GET(request: Request) {
+export async function GET(req: NextRequest) {
     try {
         // Check authentication
         const session = await getServerSession(authOptions);
         if (!session?.user?.id) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
         }
 
         // Get user's notification preferences
-        const preferences = await prisma.notificationPreference.findMany({
-            where: { userId: parseInt(session.user.id) },
+        const settings = await prisma.notificationSettings.findUnique({
+            where: {
+                userId: session.user.id
+            }
         });
 
-        // If no preferences exist, create default preferences
-        if (preferences.length === 0) {
-            const defaultPreferences = Object.values(NotificationType).map(type => ({
-                userId: parseInt(session.user.id),
-                type,
-                channels: [
-                    NotificationChannel.IN_APP,
-                    NotificationChannel.EMAIL,
-                ],
-                enabled: true,
-            }));
+        const defaultSettings = {
+            campaign: { email: true, sms: true, push: true },
+            review: { email: true, sms: false, push: true },
+            system: { email: true, sms: false, push: true }
+        };
 
-            await prisma.notificationPreference.createMany({
-                data: defaultPreferences,
-            });
-
-            return NextResponse.json(defaultPreferences);
-        }
-
-        return NextResponse.json(preferences);
+        return NextResponse.json(settings || defaultSettings);
     } catch (error) {
-        console.error('Error fetching notification preferences:', error);
+        console.error('알림 설정 조회 에러:', error);
         return NextResponse.json(
-            { error: 'Failed to fetch notification preferences' },
+            { error: '알림 설정을 조회하는데 실패했습니다.' },
             { status: 500 }
         );
     }
 }
 
 // PUT /api/notifications/preferences
-export async function PUT(request: Request) {
+export async function PUT(req: NextRequest) {
     try {
         // Check authentication
         const session = await getServerSession(authOptions);
         if (!session?.user?.id) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
         }
 
         // Get request body
-        const body = await request.json();
-        const { preferences } = body;
+        const data = await req.json();
+        const { type, channel, enabled } = data;
 
-        // Validate preferences
-        if (!Array.isArray(preferences)) {
+        if (!isValidNotificationType(type) || !isValidNotificationChannel(channel) || typeof enabled !== 'boolean') {
             return NextResponse.json(
-                { error: 'Invalid preferences format' },
+                { error: '유효하지 않은 알림 설정입니다.' },
                 { status: 400 }
             );
         }
 
-        // Validate each preference
-        for (const pref of preferences) {
-            if (
-                !pref.type ||
-                !Array.isArray(pref.channels) ||
-                typeof pref.enabled !== 'boolean'
-            ) {
-                return NextResponse.json(
-                    { error: 'Invalid preference format' },
-                    { status: 400 }
-                );
+        const existingPreferences = await prisma.notificationSettings.findUnique({
+            where: {
+                userId: session.user.id
             }
+        });
 
-            // Validate notification type
-            if (!Object.values(NotificationType).includes(pref.type)) {
-                return NextResponse.json(
-                    { error: `Invalid notification type: ${pref.type}` },
-                    { status: 400 }
-                );
-            }
-
-            // Validate notification channels
-            for (const channel of pref.channels) {
-                if (!Object.values(NotificationChannel).includes(channel)) {
-                    return NextResponse.json(
-                        { error: `Invalid notification channel: ${channel}` },
-                        { status: 400 }
-                    );
+        const currentSettings = existingPreferences?.[type] as Record<string, boolean> || {};
+        
+        const preferences = await prisma.notificationSettings.upsert({
+            where: {
+                userId: session.user.id
+            },
+            update: {
+                [type]: {
+                    ...currentSettings,
+                    [channel]: enabled
+                }
+            },
+            create: {
+                userId: session.user.id,
+                [type]: {
+                    [channel]: enabled
                 }
             }
-        }
-
-        // Delete existing preferences
-        await prisma.notificationPreference.deleteMany({
-            where: { userId: parseInt(session.user.id) },
         });
 
-        // Create new preferences
-        const updatedPreferences = await prisma.notificationPreference.createMany({
-            data: preferences.map(pref => ({
-                userId: parseInt(session.user.id),
-                type: pref.type as NotificationType,
-                channels: pref.channels as NotificationChannel[],
-                enabled: pref.enabled,
-            })),
-        });
-
-        return NextResponse.json(updatedPreferences);
+        return NextResponse.json(preferences);
     } catch (error) {
-        console.error('Error updating notification preferences:', error);
+        console.error('알림 설정 업데이트 에러:', error);
         return NextResponse.json(
-            { error: 'Failed to update notification preferences' },
+            { error: '알림 설정을 업데이트하는데 실패했습니다.' },
             { status: 500 }
         );
     }

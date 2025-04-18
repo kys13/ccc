@@ -25,7 +25,7 @@ export default function CampaignsPage() {
                 category: searchParams?.get('category') || undefined,
                 status: searchParams?.get('status') || undefined,
                 region: searchParams?.get('region') || undefined,
-                sns_type: searchParams?.get('sns_type') || undefined,
+                snsType: searchParams?.get('sns_type') || undefined,
                 sort: searchParams?.get('sort') as 'latest' | 'deadline' | 'popular' | undefined,
                 page,
                 limit: 12
@@ -74,7 +74,7 @@ export default function CampaignsPage() {
         <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col gap-8">
                 <div className="bg-white rounded-lg shadow-md p-6">
-                    <CampaignFilters onFilterChange={loadCampaigns} />
+                    <CampaignFilters onFiltersChange={loadCampaigns} />
                 </div>
 
                 <div className="flex flex-col gap-6">

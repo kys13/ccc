@@ -1,14 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getCampaigns } from '@/lib/api/campaigns';
+import { getCampaigns, GetCampaignsParams } from '@/lib/api/campaigns';
 import CampaignCard from '@/components/campaigns/CampaignCard';
 import CampaignFilters, { FilterOption } from '@/components/campaigns/CampaignFilters';
 import type { Campaign } from '@/types/campaign';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { useToast } from '@/contexts/ToastContext';
-import { Clock, Flame, Sparkles } from 'lucide-react';
+import { Clock, Flame, Sparkles, MapPin, Users, Calendar, Gift } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import Pagination from '@/components/Pagination';
 
 const regions: FilterOption[] = [
   { id: 'seoul', name: '서울', value: 'seoul' },
@@ -30,201 +32,170 @@ const categories: FilterOption[] = [
   { id: 'hotel', name: '숙박', value: 'hotel' },
 ];
 
-export default function VisitPage() {
+interface CurrentFilters extends Omit<GetCampaignsParams, 'page' | 'limit' | 'type'> {}
+
+export default function VisitCampaignsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showToast } = useToast();
+
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const observer = useRef<IntersectionObserver>();
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
-  // URL에서 필터 값 초기화
-  const initialFilters = {
-    region: searchParams.get('region') || 'all',
-    category: searchParams.get('category') || 'all',
-    snsType: searchParams.get('snsType') || 'all',
-    sort: searchParams.get('sort') || 'latest',
-    search: searchParams.get('search') || '',
-  };
+  const getCurrentFilters = useCallback((): CurrentFilters => {
+    return {
+      sort: searchParams?.get('sort') || 'latest',
+      search: searchParams?.get('search') || undefined,
+      category: searchParams?.get('category') || undefined,
+      region: searchParams?.get('region') || undefined,
+      snsType: searchParams?.get('snsType') || undefined,
+    };
+  }, [searchParams]);
 
-  const [currentFilters, setCurrentFilters] = useState(initialFilters);
-
-  const lastCampaignElementRef = useCallback((node: HTMLDivElement | null) => {
-    if (loading) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage(prevPage => prevPage + 1);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [loading, hasMore]);
-
-  const updateURL = (filters: typeof currentFilters) => {
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value && value !== 'all' && value !== '') {
-        params.set(key, value);
-      }
-    });
-    router.push(`/visit?${params.toString()}`, { scroll: false });
-  };
-
-  const loadCampaigns = async (filters: typeof currentFilters, pageNum: number = 1, append: boolean = false) => {
+  const fetchCampaigns = useCallback(async (currentPage: number, filters: CurrentFilters) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      
-      const queryFilters: Record<string, string> = {};
-      if (filters.region !== 'all') queryFilters.city = filters.region;
-      if (filters.category !== 'all') queryFilters.category = filters.category;
-      if (filters.snsType !== 'all') queryFilters.snsType = filters.snsType;
-      if (filters.sort !== 'latest') queryFilters.sort = filters.sort;
-      if (filters.search) queryFilters.search = filters.search;
-
       const response = await getCampaigns({
-        ...queryFilters,
-        type: 'visit',
-        page: pageNum.toString(),
-        limit: '12',
-        isVisible: 'true'
+        ...filters,
+        page: currentPage,
+        limit: 12,
       });
-
-      if (!response || !response.campaigns) {
-        throw new Error('캠페인 데이터를 불러올 수 없습니다.');
-      }
-
-      setCampaigns(prev => append ? [...prev, ...response.campaigns] : response.campaigns);
-      setHasMore(response.pagination.page < response.pagination.totalPages);
-      
-      if (!append) {
-        updateURL(filters);
-      }
-    } catch (err) {
-      setError('캠페인을 불러오는데 실패했습니다.');
-      console.error('Error loading campaigns:', err);
-      showToast('캠페인을 불러오는데 실패했습니다.', 'error');
+      setCampaigns(response.campaigns as any);
+      setTotalPages(response.totalPages);
+      setTotalItems(response.totalItems);
+    } catch (err: any) {
+      console.error('Failed to load visit campaigns:', err);
+      setError('캠페인 목록을 불러오는데 실패했습니다.');
+      showToast('캠페인 목록 로딩 실패', 'error');
     } finally {
       setLoading(false);
     }
+  }, [showToast]);
+
+  useEffect(() => {
+    const filters = getCurrentFilters();
+    fetchCampaigns(page, filters);
+  }, [page, searchParams, fetchCampaigns, getCurrentFilters]);
+
+  const handleFiltersChange = (newFilters: Record<string, string>) => {
+    const params = new URLSearchParams();
+    delete newFilters.type;
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (value && value !== 'all') {
+        params.set(key, value);
+      }
+    });
+    router.push(`/visit?${params.toString()}`);
+    setPage(1);
   };
 
-  useEffect(() => {
-    loadCampaigns(initialFilters);
-  }, []);
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    window.scrollTo(0, 0);
+  };
 
-  useEffect(() => {
-    if (page > 1) {
-      loadCampaigns(currentFilters, page, true);
-    }
-  }, [page]);
+  const currentFiltersForProps = getCurrentFilters();
 
-  const handleFiltersChange = (filters: Record<string, string>) => {
-    const newFilters = {
-      ...currentFilters,
-      region: filters.region || 'all',
-      category: filters.category || 'all',
-      snsType: filters.snsType || 'all',
-      sort: filters.sort || 'latest',
-      search: filters.search || '',
-    };
-    setCurrentFilters(newFilters);
-    setPage(1);
-    loadCampaigns(newFilters);
+  const handleSortChange = (sortValue: string) => {
+    const filtersWithStringValues: Record<string, string> = {};
+    Object.entries(currentFiltersForProps).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        filtersWithStringValues[key] = String(value);
+      }
+    });
+    handleFiltersChange({ ...filtersWithStringValues, sort: sortValue });
   };
 
   return (
     <ErrorBoundary>
-      <div className="w-full px-4 py-8">
-        <div className="max-w-[1920px] mx-auto">
-          <h1 className="text-2xl font-bold mb-6">방문 체험</h1>
-          
-          <div className="max-w-[1600px] mx-auto">
-            <CampaignFilters
-              type="visit"
-              regions={regions}
-              categories={categories}
-              snsTypes={snsTypes}
-              onFiltersChange={handleFiltersChange}
-              initialFilters={currentFilters}
-              className="mb-6"
-              hideSort={true}
-            />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">방문형 캠페인</h1>
+        <CampaignFilters
+          type="visit"
+          onFiltersChange={handleFiltersChange}
+          regions={regions}
+          categories={categories}
+          snsTypes={snsTypes}
+          className="mb-8"
+        />
+        
+        <div className="flex items-center space-x-4 mb-8">
+          <button
+            onClick={() => handleSortChange('latest')}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center space-x-2 ${
+              currentFiltersForProps.sort === 'latest' 
+                ? 'bg-[#FF5C35] text-white' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>최신순</span>
+          </button>
+          <button
+            onClick={() => handleSortChange('deadline')}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center space-x-2 ${
+              currentFiltersForProps.sort === 'deadline' 
+                ? 'bg-[#FF5C35] text-white' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            <span>마감임박순</span>
+          </button>
+          <button
+            onClick={() => handleSortChange('popular')}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center space-x-2 ${
+              currentFiltersForProps.sort === 'popular' 
+                ? 'bg-[#FF5C35] text-white' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            <Flame className="w-4 h-4" />
+            <span>인기순</span>
+          </button>
+        </div>
 
-            <div className="flex items-center space-x-4 mb-8">
-              <button
-                onClick={() => handleFiltersChange({ ...currentFilters, sort: 'latest' })}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center space-x-2 ${
-                  currentFilters.sort === 'latest' 
-                    ? 'bg-[#FF5C35] text-white' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>최신순</span>
-              </button>
-              <button
-                onClick={() => handleFiltersChange({ ...currentFilters, sort: 'deadline' })}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center space-x-2 ${
-                  currentFilters.sort === 'deadline' 
-                    ? 'bg-[#FF5C35] text-white' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                <Clock className="w-4 h-4" />
-                <span>마감임박순</span>
-              </button>
-              <button
-                onClick={() => handleFiltersChange({ ...currentFilters, sort: 'popular' })}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center space-x-2 ${
-                  currentFilters.sort === 'popular' 
-                    ? 'bg-[#FF5C35] text-white' 
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                <Flame className="w-4 h-4" />
-                <span>인기순</span>
-              </button>
+        <div className="mt-8">
+          {loading && page === 1 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, index) => (
+                <Skeleton key={index} className="h-[406px] w-[265px] rounded-lg" />
+              ))}
             </div>
-
-            {error ? (
-              <div className="text-center py-8 text-red-600">
-                <p>{error}</p>
-                <button
-                  onClick={() => loadCampaigns(initialFilters)}
-                  className="mt-4 text-blue-600 hover:text-blue-800"
-                >
-                  다시 시도
-                </button>
-              </div>
-            ) : campaigns.length === 0 && !loading ? (
-              <div className="text-center py-8 text-gray-500">
-                <p>해당하는 캠페인이 없습니다.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-4">
-                {campaigns.map((campaign, index) => (
-                  <div
-                    key={campaign.id}
-                    ref={index === campaigns.length - 1 ? lastCampaignElementRef : undefined}
-                    className="w-full"
-                  >
-                    <CampaignCard campaign={campaign} />
-                  </div>
+          ) : error ? (
+            <div className="text-center py-10 text-red-600">
+              {error}
+            </div>
+          ) : campaigns.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {campaigns.map(campaign => (
+                  <CampaignCard key={campaign.id} campaign={campaign} />
                 ))}
               </div>
-            )}
-
-            {loading && (
-              <div className="text-center py-8">
-                <div className="loading-spinner mx-auto"></div>
-              </div>
-            )}
-          </div>
+              {loading && page > 1 && (
+                <div className="text-center py-4">...</div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-10 text-gray-500">표시할 캠페인이 없습니다.</div>
+          )}
         </div>
+
+        {!loading && totalPages > 1 && (
+          <div className="mt-12 flex justify-center">
+            <Pagination 
+              currentPage={page} 
+              totalPages={totalPages} 
+              onPageChange={handlePageChange} 
+            />
+          </div>
+        )}
       </div>
     </ErrorBoundary>
   );

@@ -4,11 +4,15 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { VerificationStatus, UserType } from '@prisma/client'; // Import enums
 
 const VerificationSchema = z.object({
+    // companyName is now in ClientVerification model
     companyName: z.string().min(1),
-    companyRegistrationNumber: z.string().min(10),
-    businessLicense: z.string().url(),
+    // Renamed to registrationNumber and now in ClientVerification model
+    companyRegistrationNumber: z.string().min(10), 
+    // Renamed to licenseUrl and now in ClientVerification model
+    businessLicense: z.string().url(), 
     additionalDocuments: z.array(z.string().url()).optional(),
 });
 
@@ -16,7 +20,7 @@ const VerificationSchema = z.object({
 export async function POST(request: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session) {
+        if (!session?.user?.id) { // Check for user ID as well
             return new NextResponse(
                 JSON.stringify({ message: '인증이 필요합니다.' }),
                 { status: 401 }
@@ -26,39 +30,59 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const validatedData = VerificationSchema.parse(body);
 
-        // 이미 신청한 경우 체크
+        // Check if already exists or update existing one
         const existingVerification = await prisma.clientVerification.findUnique({
             where: { userId: session.user.id }
         });
 
-        if (existingVerification && existingVerification.status === 'pending') {
-            return new NextResponse(
-                JSON.stringify({ message: '이미 처리 중인 인증 요청이 있습니다.' }),
-                { status: 400 }
-            );
+        let verification;
+        if (existingVerification) {
+            // Allow resubmission only if rejected?
+            if (existingVerification.status === VerificationStatus.PENDING) {
+                 return new NextResponse(
+                     JSON.stringify({ message: '이미 처리 중인 인증 요청이 있습니다.' }),
+                     { status: 400 }
+                 );
+            }
+            // Update existing record
+            verification = await prisma.clientVerification.update({
+                where: { userId: session.user.id },
+                data: {
+                    companyName: validatedData.companyName,
+                    registrationNumber: validatedData.companyRegistrationNumber,
+                    licenseUrl: validatedData.businessLicense,
+                    documents: validatedData.additionalDocuments || [],
+                    status: VerificationStatus.PENDING, // Reset status on resubmission
+                    notes: null // Clear previous notes
+                }
+            });
+        } else {
+            // Create new verification record
+            verification = await prisma.clientVerification.create({
+                data: {
+                    userId: session.user.id,
+                    companyName: validatedData.companyName,
+                    registrationNumber: validatedData.companyRegistrationNumber,
+                    licenseUrl: validatedData.businessLicense,
+                    documents: validatedData.additionalDocuments || [],
+                    status: VerificationStatus.PENDING
+                }
+            });
         }
-
-        // 사용자 정보 업데이트
+        
+        // Update User model (only businessNumber and set type to pending/individual initially)
+        // Admin should approve and change userType to BUSINESS later.
         await prisma.user.update({
             where: { id: session.user.id },
             data: {
-                companyName: validatedData.companyName,
-                companyRegistrationNumber: validatedData.companyRegistrationNumber,
-                businessLicense: validatedData.businessLicense,
-                clientStatus: 'pending'
+                // Update businessNumber based on submission
+                businessNumber: validatedData.companyRegistrationNumber, 
+                // Keep userType as INDIVIDUAL until admin approval?
+                // Or set a specific status like PENDING_VERIFICATION if needed.
+                // userType: UserType.INDIVIDUAL, // Explicitly keep or update as needed
             }
         });
 
-        // 인증 요청 생성
-        const verification = await prisma.clientVerification.create({
-            data: {
-                userId: session.user.id,
-                documents: {
-                    businessLicense: validatedData.businessLicense,
-                    additionalDocuments: validatedData.additionalDocuments || []
-                }
-            }
-        });
 
         return NextResponse.json({
             message: '클라이언트 인증 요청이 접수되었습니다.',
@@ -88,7 +112,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session) {
+        if (!session?.user?.id) { // Check for user ID
             return new NextResponse(
                 JSON.stringify({ message: '인증이 필요합니다.' }),
                 { status: 401 }

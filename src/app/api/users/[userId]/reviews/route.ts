@@ -17,16 +17,21 @@ export async function GET(
       );
     }
 
-    if (session.user.id !== params.userId) {
+    if (session.user.id !== parseInt(params.userId)) {
       return new NextResponse(
         JSON.stringify({ message: '권한이 없습니다.' }),
         { status: 403 }
       );
     }
 
+    const userIdInt = parseInt(params.userId);
+    if (isNaN(userIdInt)) {
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    }
+
     const reviews = await prisma.review.findMany({
       where: {
-        userId: params.userId,
+        userId: userIdInt,
       },
       include: {
         campaign: {

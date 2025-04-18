@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { getPaymentProvider } from '@/lib/payment';
@@ -9,76 +10,148 @@ const SubscriptionSchema = z.object({
     paymentMethod: z.string(),
 });
 
-export async function POST(request: NextRequest) {
+// GET /api/subscriptions - 구독 정보 조회
+export async function GET(request: NextRequest) {
     try {
-        const body = await request.json();
-        const validatedData = SubscriptionSchema.parse(body);
-        
-        // 사용자 정보 가져오기 (JWT 토큰에서)
-        const token = request.headers.get('Authorization')?.split(' ')[1];
-        if (!token) {
-            return new NextResponse(
-                JSON.stringify({ message: '인증이 필요합니다.' }),
-                { status: 401 }
-            );
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
         }
 
-        // 플랜 정보 확인
-        const plan = await prisma.plan.findUnique({
-            where: { id: validatedData.planId }
-        });
-
-        if (!plan || !plan.isActive) {
-            return new NextResponse(
-                JSON.stringify({ message: '유효하지 않은 플랜입니다.' }),
-                { status: 400 }
-            );
-        }
-
-        // 결제 프로바이더 초기화 (예: 토스페이먼츠)
-        const paymentProvider = getPaymentProvider();
-
-        // 결제 요청 생성
-        const paymentRequest = await paymentProvider.createPayment({
-            amount: plan.price,
-            orderId: `sub_${Date.now()}`,
-            orderName: `${plan.name} 구독`,
-            customerName: 'User Name', // TODO: 실제 사용자 이름으로 대체
-            successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/success`,
-            failUrl: `${process.env.NEXT_PUBLIC_APP_URL}/subscription/fail`,
-        });
-
-        // 결제 정보 저장
-        const payment = await prisma.payment.create({
-            data: {
-                userId: 1, // TODO: 실제 사용자 ID로 대체
-                subscriptionId: 1, // TODO: 실제 구독 ID로 대체
-                amount: plan.price,
-                status: 'pending',
-                paymentMethod: validatedData.paymentMethod,
-                paymentKey: paymentRequest.paymentKey,
+        const subscriptions = await prisma.subscription.findMany({
+            where: {
+                userId: session.user.id
+            },
+            include: {
+                plan: true,
+                payments: true
             }
         });
 
-        return NextResponse.json({
-            paymentKey: paymentRequest.paymentKey,
-            redirectUrl: paymentRequest.redirectUrl,
-        });
-
+        return NextResponse.json(subscriptions);
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return new NextResponse(
-                JSON.stringify({ 
-                    message: '입력값이 올바르지 않습니다.',
-                    errors: error.errors 
-                }),
+        console.error('구독 정보 조회 에러:', error);
+        return NextResponse.json(
+            { error: '구독 정보를 조회하는데 실패했습니다.' },
+            { status: 500 }
+        );
+    }
+}
+
+// POST /api/subscriptions - 새 구독 생성
+export async function POST(request: NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+        }
+
+        const body = await request.json();
+        const { planId, paymentMethod } = body;
+
+        if (!planId || !paymentMethod) {
+            return NextResponse.json(
+                { error: '필수 필드가 누락되었습니다.' },
                 { status: 400 }
             );
         }
 
-        console.error('Subscription error:', error);
-        return new NextResponse(
-            JSON.stringify({ message: '구독 신청 중 오류가 발생했습니다.' }),
+        const plan = await prisma.plan.findUnique({
+            where: { id: planId }
+        });
+
+        if (!plan) {
+            return NextResponse.json(
+                { error: '존재하지 않는 플랜입니다.' },
+                { status: 404 }
+            );
+        }
+
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + plan.duration);
+
+        const subscription = await prisma.subscription.create({
+            data: {
+                userId: session.user.id,
+                planId,
+                startDate,
+                endDate,
+                payments: {
+                    create: {
+                        amount: plan.price,
+                        paymentMethod,
+                        paymentDate: new Date(),
+                        status: 'PENDING'
+                    }
+                }
+            },
+            include: {
+                plan: true,
+                payments: true
+            }
+        });
+
+        return NextResponse.json(subscription);
+    } catch (error) {
+        console.error('구독 생성 에러:', error);
+        return NextResponse.json(
+            { error: '구독을 생성하는데 실패했습니다.' },
+            { status: 500 }
+        );
+    }
+}
+
+// PUT /api/subscriptions - 구독 상태 업데이트
+export async function PUT(request: NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 });
+        }
+
+        const body = await request.json();
+        const { subscriptionId, status } = body;
+
+        if (!subscriptionId || !status) {
+            return NextResponse.json(
+                { error: '필수 필드가 누락되었습니다.' },
+                { status: 400 }
+            );
+        }
+
+        const subscription = await prisma.subscription.findUnique({
+            where: { id: subscriptionId }
+        });
+
+        if (!subscription) {
+            return NextResponse.json(
+                { error: '존재하지 않는 구독입니다.' },
+                { status: 404 }
+            );
+        }
+
+        if (subscription.userId !== session.user.id) {
+            return NextResponse.json(
+                { error: '권한이 없습니다.' },
+                { status: 403 }
+            );
+        }
+
+        const updatedSubscription = await prisma.subscription.update({
+            where: { id: subscriptionId },
+            data: { status },
+            include: {
+                plan: true,
+                payments: true
+            }
+        });
+
+        return NextResponse.json(updatedSubscription);
+    } catch (error) {
+        console.error('구독 상태 업데이트 에러:', error);
+        return NextResponse.json(
+            { error: '구독 상태를 업데이트하는데 실패했습니다.' },
             { status: 500 }
         );
     }
@@ -101,8 +174,7 @@ export async function DELETE(request: NextRequest) {
         await prisma.subscription.update({
             where: { id: parseInt(subscriptionId) },
             data: {
-                cancelAtPeriodEnd: true,
-                status: 'cancelled'
+                status: 'CANCELLED',
             }
         });
 

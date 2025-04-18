@@ -60,7 +60,6 @@ export function generateMetadata({
     },
     verification: {
       google: 'your-google-site-verification',
-      naver: 'your-naver-site-verification',
     },
   };
 } 

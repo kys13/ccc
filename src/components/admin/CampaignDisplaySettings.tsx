@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Switch } from '@/components/ui/switch';
-import { toast } from '@/components/ui/toast';
+import { useToast } from '@/contexts/ToastContext';
 
 interface CampaignDisplaySettingsProps {
     campaignId: number;
@@ -17,6 +17,7 @@ export default function CampaignDisplaySettings({
 }: CampaignDisplaySettingsProps) {
     const [settings, setSettings] = useState(initialSettings);
     const [isUpdating, setIsUpdating] = useState(false);
+    const { showToast } = useToast();
 
     const updateDisplaySettings = async (key: keyof typeof settings, value: boolean) => {
         try {
@@ -36,17 +37,9 @@ export default function CampaignDisplaySettings({
             }
 
             setSettings(newSettings);
-            toast({
-                title: '성공',
-                description: '노출 설정이 업데이트되었습니다.',
-                type: 'success',
-            });
+            showToast('노출 설정이 업데이트되었습니다.', 'success');
         } catch (error) {
-            toast({
-                title: '오류',
-                description: '노출 설정 업데이트에 실패했습니다.',
-                type: 'error',
-            });
+            showToast('노출 설정 업데이트에 실패했습니다.', 'error');
         } finally {
             setIsUpdating(false);
         }

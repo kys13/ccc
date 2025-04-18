@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const pageType = searchParams.get('pageType');
-        const pageId = searchParams.get('pageId');
+        const pageIdParam = searchParams.get('pageId');
 
         if (!pageType) {
             return new NextResponse(
@@ -31,12 +31,34 @@ export async function GET(request: NextRequest) {
             );
         }
 
+        const pageId = pageIdParam ? parseInt(pageIdParam) : undefined;
+        if (pageIdParam && isNaN(pageId as number)) {
+            return NextResponse.json({ error: 'Invalid pageId format' }, { status: 400 });
+        }
+
+        if (pageId === undefined && request.method === 'GET') {
+            return NextResponse.json({ error: 'pageId is required for GET' }, { status: 400 });
+        }
+
+        if (request.method === 'GET' && pageId !== undefined) {
+            const seo = await prisma.sEO.findUnique({
+                where: {
+                    pageId: pageId,
+                },
+            });
+            if (!seo) {
+                return NextResponse.json({ message: 'SEO data not found' }, { status: 404 });
+            }
+            return NextResponse.json(seo);
+        }
+
+        if (pageId === undefined) {
+            return NextResponse.json({ error: 'pageId is required' }, { status: 400 });
+        }
+
         const seo = await prisma.sEO.findUnique({
             where: {
-                pageType_pageId: {
-                    pageType,
-                    pageId: pageId ? parseInt(pageId) : null,
-                },
+                pageId: pageId,
             },
         });
 
@@ -55,32 +77,38 @@ export async function PUT(request: NextRequest) {
     try {
         const body = await request.json();
         const validatedData = SEOSchema.parse(body);
+        const { pageType, pageId } = validatedData;
+
+        if (pageId === undefined) {
+            return NextResponse.json({ error: 'pageId is required for PUT' }, { status: 400 });
+        }
 
         const seo = await prisma.sEO.upsert({
             where: {
-                pageType_pageId: {
-                    pageType: validatedData.pageType,
-                    pageId: validatedData.pageId || null,
-                },
+                pageId: pageId,
             },
             update: validatedData,
             create: validatedData,
         });
 
-        // 사이트맵 업데이트
-        if (validatedData.pageType === 'campaign' && validatedData.pageId) {
+        // Sitemap 업데이트/생성 (임시 주석 처리 - 스키마 확인 및 로직 재검토 필요)
+        /*
+        if (pageType === 'campaign' && pageId !== undefined) {
+            const campaignLoc = `/campaigns/${pageId}`;
             await prisma.sitemap.upsert({
-                where: { path: `/campaigns/${validatedData.pageId}` },
+                where: { ??? }, // unique 필드 확인 필요 (id?)
                 update: {
                     lastmod: new Date(),
                 },
                 create: {
-                    path: `/campaigns/${validatedData.pageId}`,
+                    loc: campaignLoc, // 스키마에 loc 필드 없음
+                    lastmod: new Date(),
                     priority: 0.8,
                     changefreq: 'daily',
                 },
             });
         }
+        */
 
         return NextResponse.json(seo);
     } catch (error) {

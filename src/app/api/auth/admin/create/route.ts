@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
                 name,
                 role: Role.ADMIN,
                 status: Status.ACTIVE,
-                emailVerified: true // 관리자는 이메일 인증 자동 완료
+                emailVerified: null // true 대신 null 사용
             }
         });
 

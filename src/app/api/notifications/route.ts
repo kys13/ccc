@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: Request) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session?.user) {
+        if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -20,20 +20,25 @@ export async function GET(request: Request) {
             return NextResponse.json({ error: 'UserId is required' }, { status: 400 });
         }
 
-        if (session.user.id !== userId) {
+        const userIdInt = parseInt(userId);
+        if (isNaN(userIdInt)) {
+            return NextResponse.json({ error: 'Invalid userId format' }, { status: 400 });
+        }
+
+        if (session.user.id !== userIdInt) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
         const skip = (page - 1) * limit;
         const [notifications, total] = await Promise.all([
             prisma.notification.findMany({
-                where: { userId },
+                where: { userId: session.user.id },
                 orderBy: { createdAt: 'desc' },
                 skip,
                 take: limit,
             }),
             prisma.notification.count({
-                where: { userId },
+                where: { userId: session.user.id },
             }),
         ]);
 
@@ -72,7 +77,20 @@ export async function POST(request: Request) {
             );
         }
 
-        if (session.user.id !== userId) {
+        let numericUserIdBody: number;
+        if (typeof userId === 'string') {
+            numericUserIdBody = parseInt(userId);
+        } else if (typeof userId === 'number') {
+            numericUserIdBody = userId;
+        } else {
+            return NextResponse.json({ error: 'Invalid userId type in body' }, { status: 400 });
+        }
+
+        if (isNaN(numericUserIdBody)) {
+            return NextResponse.json({ error: 'Invalid userId format in body' }, { status: 400 });
+        }
+
+        if (session.user.id !== numericUserIdBody) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 
@@ -81,7 +99,7 @@ export async function POST(request: Request) {
                 title,
                 content,
                 type,
-                userId,
+                userId: numericUserIdBody,
             }
         });
 

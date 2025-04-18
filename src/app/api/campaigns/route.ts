@@ -5,39 +5,27 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { z } from 'zod';
 import { cache } from 'react';
+import { Role, ROLES } from '@/types/auth';
 
 const CampaignSchema = z.object({
-    title: z.string().min(1),
-    description: z.string().min(1),
-    reward: z.number().positive(),
-    maxParticipants: z.number().positive(),
-    startDate: z.string().datetime(),
-    endDate: z.string().datetime(),
-    requirements: z.record(z.any()),
-    reviewTemplate: z.record(z.any()).optional(),
-    
-    // 캠페인 타입 관련
-    type: z.enum(['visit', 'delivery']),
+    title: z.string(),
+    description: z.string(),
+    imageUrl: z.string().optional(),
+    reward: z.number(),
+    maxParticipants: z.number(),
+    startDate: z.string(),
+    endDate: z.string(),
+    requirements: z.string(),
     snsTypes: z.array(z.string()),
-    
-    // 방문/배송 정보
+    type: z.enum(['visit', 'delivery']),
+    categoryId: z.number(),
     locationId: z.number().optional(),
     address: z.string().optional(),
-    
-    // 카테고리
-    visitCategoryId: z.number().optional(),
-    deliveryCategoryId: z.number().optional(),
-    
-    // 노출 설정
-    displaySettings: z.object({
-        main: z.boolean(),
-        popular: z.boolean(),
-        recommended: z.boolean(),
-    }).default({
-        main: true,
-        popular: false,
-        recommended: false,
-    }),
+    status: z.enum(['ONGOING', 'COMPLETED', 'PENDING']).default('PENDING'),
+    isVisible: z.boolean().default(false),
+    showPopular: z.boolean().default(false),
+    showDeadline: z.boolean().default(false),
+    showLatest: z.boolean().default(false)
 });
 
 const getCampaignsWithCache = cache(async (
@@ -139,7 +127,7 @@ const getCampaignsWithCache = cache(async (
 export async function POST(request: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session || session.user.role !== 'client') {
+        if (!session || session.user.role !== ROLES.CLIENT) {
             return new NextResponse(
                 JSON.stringify({ message: '권한이 없습니다.' }),
                 { status: 403 }
@@ -165,8 +153,23 @@ export async function POST(request: NextRequest) {
 
         const campaign = await prisma.campaign.create({
             data: {
-                ...validatedData,
-                clientId: session.user.id,
+                title: validatedData.title,
+                description: validatedData.description,
+                imageUrl: validatedData.imageUrl,
+                reward: validatedData.reward,
+                maxParticipants: validatedData.maxParticipants,
+                startDate: validatedData.startDate,
+                endDate: validatedData.endDate,
+                requirements: validatedData.requirements,
+                snsTypes: validatedData.snsTypes,
+                status: validatedData.status,
+                isVisible: validatedData.isVisible,
+                showPopular: validatedData.showPopular || false,
+                showDeadline: validatedData.showDeadline || false,
+                showLatest: validatedData.showLatest || false,
+                locationId: validatedData.locationId,
+                visitCategoryId: validatedData.type === 'visit' ? validatedData.categoryId : null,
+                deliveryCategoryId: validatedData.type === 'delivery' ? validatedData.categoryId : null,
             },
         });
 
@@ -326,7 +329,7 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session || session.user.role !== 'admin') {
+        if (!session || session.user.role !== ROLES.ADMIN) {
             return new NextResponse(
                 JSON.stringify({ message: '권한이 없습니다.' }),
                 { status: 403 }
@@ -334,11 +337,15 @@ export async function PATCH(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { id, displaySettings } = body;
+        const { id, showPopular, showDeadline, showLatest } = body;
 
         const campaign = await prisma.campaign.update({
             where: { id },
-            data: { displaySettings },
+            data: {
+                showPopular,
+                showDeadline,
+                showLatest
+            }
         });
 
         return NextResponse.json(campaign);

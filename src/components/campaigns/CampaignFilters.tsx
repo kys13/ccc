@@ -12,7 +12,7 @@ export interface FilterOption {
 }
 
 interface CampaignFiltersProps {
-  type: 'visit' | 'delivery';
+  type?: 'visit' | 'delivery';
   regions?: FilterOption[];
   categories?: FilterOption[];
   snsTypes?: FilterOption[];
@@ -62,7 +62,8 @@ export default function CampaignFilters({
   }, 300);
 
   const getFilters = () => {
-    const filters: Record<string, string> = { type };
+    const filters: Record<string, string> = {};
+    if (type) filters.type = type;
     
     if (search) filters.search = search;
     if (selectedRegion !== 'all') filters.region = selectedRegion;
@@ -86,6 +87,11 @@ export default function CampaignFilters({
       [key]: value
     };
 
+    // type이 undefined이면 제거
+    if (type === undefined) {
+      delete newFilters.type;
+    }
+
     // 'all' 값인 필터만 제외 (빈 문자열은 유지)
     Object.keys(newFilters).forEach(filterKey => {
       if (newFilters[filterKey] === 'all') {
@@ -93,7 +99,16 @@ export default function CampaignFilters({
       }
     });
 
-    onFiltersChange(newFilters);
+    // Remove properties with undefined values before calling onFiltersChange
+    const finalFilters: Record<string, string> = {};
+    Object.keys(newFilters).forEach(key => {
+      const value = newFilters[key];
+      if (value !== undefined) {
+        finalFilters[key] = value;
+      }
+    });
+
+    onFiltersChange(finalFilters);
   };
 
   const handleReset = () => {
@@ -103,7 +118,7 @@ export default function CampaignFilters({
     setSelectedSnsType('all');
     setSelectedPriceRange('all');
     setSort('latest');
-    onFiltersChange({ type });
+    onFiltersChange(type ? { type } : {});
   };
 
   return (

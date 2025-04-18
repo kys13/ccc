@@ -50,12 +50,13 @@ model User {
   
   phoneNumber   String?   @unique
   ssn          String?   @unique
-  businessNumber String?  @unique
+  businessNumber String?  // Make this updatable by verification
   postcode     String?
   address      String?
   addressDetail String?
   snsAccounts  SnsAccount[]
-  userType     UserType  @default(INDIVIDUAL)
+  userType     UserType  @default(INDIVIDUAL) // Can be updated to BUSINESS
+  clientVerification ClientVerification? 
 
   accounts      Account[]
   sessions      Session[]
@@ -63,6 +64,7 @@ model User {
   reviews       Review[]
   notifications Notification[]
   notificationSettings NotificationSettings?
+  subscriptions Subscription[]
 
   @@map("users")
 }
@@ -146,7 +148,7 @@ model DeliveryCategory {
 
 model CampaignCategory {
   id        Int        @id @default(autoincrement())
-  name      String
+  name      String     @unique
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   campaigns Campaign[] @relation("CampaignToCampaignCategory")
@@ -197,24 +199,22 @@ model SEO {
   canonical     String?
   robots        String    @default("index,follow")
   schema        Json?
+  campaign      Campaign? @relation(fields: [pageId], references: [id])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  campaign      Campaign? @relation(fields: [pageId], references: [id])
 
-  @@unique([pageType, pageId])
+  @@map("seo")
 }
 
 model NotificationSettings {
-  id                 Int      @id @default(autoincrement())
-  userId            Int      @unique
-  emailNotifications Boolean  @default(true)
-  pushNotifications  Boolean  @default(true)
-  campaignUpdates    Boolean  @default(true)
-  applicationStatus  Boolean  @default(true)
-  reviewReminders    Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              User     @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+  campaign  Json?    // { email: boolean, sms: boolean, push: boolean }
+  review    Json?    // { email: boolean, sms: boolean, push: boolean }
+  system    Json?    // { email: boolean, sms: boolean, push: boolean }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("notification_settings")
 }
@@ -250,6 +250,17 @@ model SnsAccount {
   @@map("sns_accounts")
 }
 
+model Sitemap {
+  id        Int      @id @default(autoincrement())
+  url       String   @unique
+  priority  Float    @default(0.5)
+  frequency String   @default("weekly")
+  lastmod   DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@map("sitemap")
+}
+
 enum Role {
   USER
   ADMIN
@@ -272,4 +283,71 @@ enum SnsPlatform {
 enum UserType {
   INDIVIDUAL
   BUSINESS
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// New model for Client Verification requests
+model ClientVerification {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @unique // One verification per user
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName   String   // From the form
+  registrationNumber String // From the form
+  licenseUrl    String   // URL to the business license image/pdf
+  documents     Json?    // Store additional document URLs or info
+  status        VerificationStatus @default(PENDING)
+  notes         String?  // Admin notes for rejection etc.
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("client_verifications")
+}
+
+model Plan {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String
+  price       Int
+  duration    Int          // 구독 기간(일)
+  features    String[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  planId    Int
+  startDate DateTime
+  endDate   DateTime
+  status    String    @default("ACTIVE")  // ACTIVE, CANCELLED, EXPIRED
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id])
+  plan      Plan      @relation(fields: [planId], references: [id])
+  payments  Payment[]
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id             Int          @id @default(autoincrement())
+  subscriptionId Int
+  amount         Int
+  status         String       @default("PENDING")  // PENDING, COMPLETED, FAILED
+  paymentMethod  String
+  paymentDate    DateTime
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+
+  @@map("payments")
 }
